@@ -105,6 +105,9 @@ img { max-width: 100%; display: block; }
     z-index: 100;
     padding: 20px;
 }
+.modal-overlay[hidden] {
+    display: none;
+}
 .modal-box {
     background: #fff;
     border-radius: var(--radius);
