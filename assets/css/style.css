@@ -87,6 +87,34 @@ img { max-width: 100%; display: block; }
 .flow-choice { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 .flow-question { width: 100%; font-weight: 700; margin-bottom: 4px; }
 
+/* ---------- Light animation on the hero mascot (per design spec) ---------- */
+@keyframes gentle-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.hero-img { animation: gentle-float 4s ease-in-out infinite; }
+
+/* ---------- Disclaimer modal ---------- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 20, 20, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+}
+.modal-box {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 28px;
+    max-width: 480px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+.modal-box h2 { margin-top: 0; color: var(--brand-blue); }
+.modal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
 /* ---------- Category grid ---------- */
 .category-grid h2 { margin-bottom: 16px; }
 .cards {
@@ -151,6 +179,18 @@ img { max-width: 100%; display: block; }
     color: var(--cat-color, var(--brand-blue));
     padding: 0 6px;
 }
+.q-type {
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-left: 8px;
+    color: var(--muted);
+}
 .question-text { font-weight: 600; margin: 6px 0 14px; }
 .quiz-option {
     display: block;
@@ -168,7 +208,12 @@ img { max-width: 100%; display: block; }
     text-align: center;
     margin-bottom: 28px;
 }
-.score-mascot { width: 140px; margin: 0 auto 12px; }
+@keyframes mascot-pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    60% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); }
+}
+.score-mascot { width: 140px; margin: 0 auto 12px; animation: mascot-pop 0.5s ease-out; }
 .streak-note { color: var(--brand-orange); font-weight: 700; }
 
 .quiz-result {
@@ -181,6 +226,23 @@ img { max-width: 100%; display: block; }
 .result-incorrect { background: #fdf3ec; border-color: #f2d3b8; }
 .your-answer, .correct-answer { margin: 6px 0; }
 .explanation { margin: 10px 0 0; color: var(--muted); }
+
+/* ---------- Stock-vs-sector comparison ---------- */
+.stock-vs-sector {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+}
+.svs-label { font-weight: 700; margin: 0 0 10px; font-size: 0.9rem; }
+.svs-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.svs-name { width: 60px; font-size: 0.85rem; font-weight: 600; flex-shrink: 0; }
+.svs-track { flex: 1; background: #eee; border-radius: 999px; height: 14px; overflow: hidden; }
+.svs-fill { height: 100%; border-radius: 999px; }
+.svs-up { background: #3fa66a; }
+.svs-down { background: #d8664f; }
+.svs-value { width: 56px; text-align: right; font-size: 0.85rem; font-weight: 700; flex-shrink: 0; }
+
+.flow-prompt { font-size: 0.85rem; color: var(--muted); margin: 8px 0 4px; }
 
 /* ---------- Dashboard ---------- */
 .streak-banner {
@@ -198,24 +260,9 @@ img { max-width: 100%; display: block; }
 .streak-current { margin: 0; font-size: 1.3rem; font-weight: 800; }
 .streak-longest { margin: 4px 0 0; color: var(--muted); }
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 18px;
-}
-.dashboard-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-top: 6px solid var(--cat-color, var(--brand-blue));
-    border-radius: var(--radius);
-    padding: 18px;
-    text-align: center;
-    box-shadow: var(--shadow);
-}
-.dashboard-card img { width: 48px; height: 48px; margin: 0 auto 10px; object-fit: contain; }
-.dashboard-card .score { font-weight: 700; }
-.dashboard-card .attempts { font-weight: 400; color: var(--muted); font-size: 0.85rem; }
-.dashboard-card .no-data { color: var(--muted); font-size: 0.9rem; }
+.category-card .score { font-weight: 700; margin-top: 10px; }
+.category-card .attempts { font-weight: 400; color: var(--muted); font-size: 0.85rem; }
+.category-card .no-data { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
 
 /* ---------- Disclaimer ---------- */
 .disclaimer-page h2 { color: var(--brand-blue); margin-top: 28px; }

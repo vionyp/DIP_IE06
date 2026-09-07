@@ -8,12 +8,22 @@ if (!category_exists($category)) {
     $base_url = '..';
     $page_title = 'Category not found';
     require __DIR__ . '/../includes/header.php';
-    echo '<p>Unknown category. <a href="../index.php">Back to home</a>.</p>';
+    echo '<p>Unknown category. <a href="../pages/dashboard.php">Back to dashboard</a>.</p>';
     require __DIR__ . '/../includes/footer.php';
     exit;
 }
 
 $pdo = get_db();
+
+// First visit to this category records "lesson first" as the chosen path.
+// ON DUPLICATE KEY UPDATE is a no-op here so a later quiz-first visit to a
+// different category is unaffected, and this category's choice sticks.
+$pdo->prepare('
+    INSERT INTO user_category_prefs (user_id, category, preferred_flow)
+    VALUES (:uid, :cat, "education_first")
+    ON DUPLICATE KEY UPDATE user_id = user_id
+')->execute(['uid' => CURRENT_USER_ID, 'cat' => $category]);
+
 $stmt = $pdo->prepare('SELECT * FROM lessons WHERE category = :cat ORDER BY sort_order ASC, id ASC');
 $stmt->execute(['cat' => $category]);
 $lessons = $stmt->fetchAll();

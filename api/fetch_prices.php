@@ -1,6 +1,6 @@
 <?php
 /**
- * SemiSense — price fetch job (Route 3: historical data).
+ * StockSense — price fetch job (Route 3: historical data).
  *
  * Run this manually or on a schedule (e.g. Windows Task Scheduler with
  * XAMPP's php.exe, or a cron job). It should NEVER be called directly
@@ -8,7 +8,7 @@
  *
  * Usage:
  *   php api/fetch_prices.php
- *   (or visit http://localhost/semisense/api/fetch_prices.php in a
+ *   (or visit http://localhost/stocksense/api/fetch_prices.php in a
  *    browser while developing locally — remove that access once the
  *    site is exposed beyond localhost)
  */
@@ -37,7 +37,7 @@ foreach ($tickers as $ticker) {
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT        => 10,
-        CURLOPT_USERAGENT      => 'Mozilla/5.0 (SemiSense educational app)',
+        CURLOPT_USERAGENT      => 'Mozilla/5.0 (StockSense educational app)',
     ]);
     $raw = curl_exec($ch);
     $err = curl_error($ch);

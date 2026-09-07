@@ -8,21 +8,21 @@
 if (!isset($base_url)) {
     $base_url = '.';
 }
-$page_title = $page_title ?? 'SemiSense';
+$page_title = $page_title ?? 'StockSense';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= htmlspecialchars($page_title) ?> · SemiSense</title>
+<title><?= htmlspecialchars($page_title) ?> · StockSense</title>
 <link rel="stylesheet" href="<?= $base_url ?>/assets/css/style.css">
 </head>
 <body>
 <header class="site-header">
     <div class="site-header-inner">
         <a class="brand" href="<?= $base_url ?>/index.php">
-            <span class="brand-mark">🔷</span> SemiSense
+            <span class="brand-mark">🔷</span> StockSense
         </a>
         <nav class="main-nav">
             <a href="<?= $base_url ?>/index.php">Home</a>

@@ -7,7 +7,7 @@ require __DIR__ . '/../includes/header.php';
 <section class="disclaimer-page">
     <h1>Disclaimer</h1>
 
-    <p><strong>SemiSense is an educational tool, not a trading platform or a source of financial advice.</strong>
+    <p><strong>StockSense is an educational tool, not a trading platform or a source of financial advice.</strong>
        Nothing in this app — including quiz questions, lesson content, or price/news data — is a
        recommendation to buy, sell, or hold any security.</p>
 
@@ -17,8 +17,15 @@ require __DIR__ . '/../includes/header.php';
        factors at once, and past reactions to similar news do not guarantee future outcomes.</p>
 
     <h2>No real or simulated money changes hands</h2>
-    <p>SemiSense does not simulate a trading account, portfolio, or order execution. There are no
+    <p>StockSense does not simulate a trading account, portfolio, or order execution. There are no
        positions, no profit-and-loss tracking, and no leverage anywhere in this app.</p>
+
+    <h2>Reading the stock-vs-sector comparison</h2>
+    <p>After each quiz question, you'll see how a stock's price move compared to the semiconductor
+       sector benchmark (SOXX) over the same period. This is shown purely to help you judge whether
+       a move was specific to that company or shared across the whole sector — it is
+       <strong>an observation about the past, not a trading signal</strong>, and should never be
+       read as a recommendation to buy or sell anything.</p>
 
     <h2>A note on leverage and risk</h2>
     <p>If you go on to use real trading platforms, understand that <strong>leveraged or margin trading

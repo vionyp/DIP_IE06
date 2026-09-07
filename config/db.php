@@ -1,15 +1,15 @@
 <?php
 /**
- * SemiSense — database connection
+ * StockSense — database connection
  *
  * Edit the four constants below to match your local XAMPP MySQL setup.
  * Default XAMPP MySQL has user 'root' with an EMPTY password — change
- * DB_USER/DB_PASS here if you created a dedicated 'semisense' user
+ * DB_USER/DB_PASS here if you created a dedicated 'stocksense' user
  * (recommended — see sql/schema.sql comments / README).
  */
 
 define('DB_HOST', '127.0.0.1');
-define('DB_NAME', 'semisense');
+define('DB_NAME', 'stocksense');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
@@ -29,7 +29,7 @@ function get_db(): PDO
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (PDOException $e) {
             http_response_code(500);
-            die('Database connection failed. Check config/db.php and confirm the "semisense" '
+            die('Database connection failed. Check config/db.php and confirm the "stocksense" '
                 . 'database has been imported (see sql/schema.sql). Error: ' . htmlspecialchars($e->getMessage()));
         }
     }

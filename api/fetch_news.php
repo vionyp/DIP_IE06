@@ -1,6 +1,6 @@
 <?php
 /**
- * SemiSense — news fetch job.
+ * StockSense — news fetch job.
  *
  * Pulls raw headlines from Finnhub (primary) and Alpha Vantage
  * (supplementary — free tier is heavily rate-limited to ~25 requests/day,

@@ -1,6 +1,6 @@
 <?php
 /**
- * SemiSense — fixed category taxonomy.
+ * StockSense — fixed category taxonomy.
  * Used everywhere: education trail, quiz filters, dashboard breakdown.
  * Keep this list in sync with the ENUM values in sql/schema.sql.
  */

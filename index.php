@@ -1,18 +1,7 @@
 <?php
 require_once __DIR__ . '/config/db.php';
-require_once __DIR__ . '/config/categories.php';
 
 $pdo = get_db();
-
-// Record the learn-first / quiz-first choice if the user just clicked one.
-if (isset($_GET['flow']) && in_array($_GET['flow'], ['education_first', 'quiz_first'], true)) {
-    $stmt = $pdo->prepare('UPDATE users SET preferred_flow = :flow WHERE id = :uid');
-    $stmt->execute(['flow' => $_GET['flow'], 'uid' => CURRENT_USER_ID]);
-}
-
-$stmt = $pdo->prepare('SELECT preferred_flow FROM users WHERE id = :uid');
-$stmt->execute(['uid' => CURRENT_USER_ID]);
-$preferred_flow = $stmt->fetchColumn();
 
 $base_url = '.';
 $page_title = 'Learn semiconductor market news';
@@ -20,43 +9,32 @@ require __DIR__ . '/includes/header.php';
 ?>
 
 <section class="hero">
-    <img src="assets/img/hero-landing.png" alt="SemiSense mascot next to a rising stock chart" class="hero-img">
+    <img src="assets/img/hero-landing.png" alt="StockSense capybara mascot next to a rising stock chart" class="hero-img">
     <div class="hero-copy">
         <h1>Understand <em>why</em> chip stocks move.</h1>
-        <p>SemiSense teaches you to read semiconductor-sector news like an analyst —
-           short lessons, then real (and clearly-labeled simulated) headline-to-price-move quizzes.
-           No trading, no portfolio, just news literacy.</p>
+        <p>StockSense teaches you to read semiconductor-sector news like an analyst —
+           short lessons, then real headline-to-price quizzes that show you the stock's
+           actual move next to the sector average. No trading, no portfolio, just news literacy.</p>
 
-        <?php if (!$preferred_flow): ?>
         <div class="flow-choice">
-            <p class="flow-question">How do you want to start?</p>
-            <a class="btn btn-primary" href="pages/education.php?category=geopolitical">Learn first</a>
-            <a class="btn btn-secondary" href="pages/quiz.php?category=geopolitical">Jump to quizzes</a>
+            <a class="btn btn-primary" href="pages/dashboard.php">Enter the dashboard →</a>
         </div>
-        <?php else: ?>
-        <div class="flow-choice">
-            <a class="btn btn-primary" href="pages/education.php?category=geopolitical">Continue learning</a>
-            <a class="btn btn-secondary" href="pages/dashboard.php">View your dashboard</a>
-        </div>
-        <?php endif; ?>
     </div>
 </section>
 
-<section class="category-grid">
-    <h2>Pick a category</h2>
-    <div class="cards">
-        <?php foreach (CATEGORIES as $key => $cat): ?>
-        <div class="category-card" style="--cat-color: <?= htmlspecialchars($cat['color']) ?>">
-            <img src="assets/img/<?= htmlspecialchars($cat['icon']) ?>" alt="<?= htmlspecialchars($cat['label']) ?> icon">
-            <h3><?= htmlspecialchars($cat['label']) ?></h3>
-            <p><?= htmlspecialchars($cat['blurb']) ?></p>
-            <div class="card-actions">
-                <a class="btn btn-small btn-primary" href="pages/education.php?category=<?= urlencode($key) ?>">Learn</a>
-                <a class="btn btn-small btn-secondary" href="pages/quiz.php?category=<?= urlencode($key) ?>">Quiz</a>
-            </div>
+<!-- Disclaimer popup — shown once per browser via localStorage (see assets/js/app.js) -->
+<div id="disclaimer-modal" class="modal-overlay" hidden>
+    <div class="modal-box">
+        <h2>Before you start</h2>
+        <p><strong>StockSense is an educational tool, not financial advice.</strong>
+           Quiz answers reflect what happened historically, not a prediction of what will
+           happen next. This app never simulates real trading, and leveraged or margin
+           trading carries risk of loss beyond your deposit.</p>
+        <div class="modal-actions">
+            <a class="btn btn-secondary btn-small" href="pages/disclaimer.php">Read the full disclaimer</a>
+            <button class="btn btn-primary btn-small" id="disclaimer-ack">Got it</button>
         </div>
-        <?php endforeach; ?>
     </div>
-</section>
+</div>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>
