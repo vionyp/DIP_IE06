@@ -1,0 +1,8 @@
+<?php
+/**
+ * Copy this file to config/api_keys.php and fill in your own keys.
+ * config/api_keys.php should NOT be committed to git / shared publicly.
+ */
+
+define('FINNHUB_API_KEY', 'your-finnhub-key-here');
+define('ALPHA_VANTAGE_API_KEY', 'your-alpha-vantage-key-here');
