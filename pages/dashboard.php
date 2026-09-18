@@ -9,11 +9,15 @@ $stmt->execute(['uid' => CURRENT_USER_ID]);
 $streak = $stmt->fetch() ?: ['current_streak' => 0, 'longest_streak' => 0];
 
 $stmt = $pdo->prepare('
-    SELECT qi.category, COUNT(*) AS attempts, SUM(qa.is_correct) AS correct
-    FROM quiz_attempts qa
-    JOIN quiz_items qi ON qi.id = qa.quiz_item_id
-    WHERE qa.user_id = :uid
-    GROUP BY qi.category
+    SELECT category, COUNT(*) AS attempts, AVG(session_pct) AS avg_pct
+    FROM (
+        SELECT qi.category, qa.session_id, SUM(qa.is_correct) / COUNT(*) AS session_pct
+        FROM quiz_attempts qa
+        JOIN quiz_items qi ON qi.id = qa.quiz_item_id
+        WHERE qa.user_id = :uid
+        GROUP BY qi.category, qa.session_id
+    ) AS per_session
+    GROUP BY category
 ');
 $stmt->execute(['uid' => CURRENT_USER_ID]);
 $byCategory = [];
@@ -49,9 +53,8 @@ require __DIR__ . '/../includes/header.php';
         <?php foreach (CATEGORIES as $key => $cat): ?>
             <?php
                 $stat = $byCategory[$key] ?? null;
-                $attempts = $stat['attempts'] ?? 0;
-                $correct  = $stat['correct'] ?? 0;
-                $pct = $attempts > 0 ? round(($correct / $attempts) * 100) : null;
+                $attempts = (int)($stat['attempts'] ?? 0);
+                $pct = $attempts > 0 ? (int)round($stat['avg_pct'] * 100) : null;
                 $chosenFlow = $prefs[$key] ?? null;
             ?>
             <div class="category-card" style="--cat-color: <?= htmlspecialchars($cat['color']) ?>">
@@ -60,7 +63,7 @@ require __DIR__ . '/../includes/header.php';
                 <p><?= htmlspecialchars($cat['blurb']) ?></p>
 
                 <?php if ($pct !== null): ?>
-                    <p class="score">Score: <strong><?= $pct ?>%</strong> <span class="attempts">(<?= $correct ?>/<?= $attempts ?>)</span></p>
+                    <p class="score">Score: <strong><?= $pct ?>%</strong> <span class="attempts">(avg of <?= $attempts ?> quiz<?= $attempts === 1 ? '' : 'zes' ?>)</span></p>
                 <?php else: ?>
                     <p class="no-data">No quizzes taken yet.</p>
                 <?php endif; ?>

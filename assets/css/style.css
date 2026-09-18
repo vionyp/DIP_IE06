@@ -121,9 +121,22 @@ img { max-width: 100%; display: block; }
 /* ---------- Category grid ---------- */
 .category-grid h2 { margin-bottom: 16px; }
 .cards {
+    /* 6 tracks, each card spans 2: three on the first row, two centred below */
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 20px;
+}
+.cards > * { grid-column: span 2; }
+.cards > :nth-child(4) { grid-column: 2 / span 2; }
+.cards > :nth-child(5) { grid-column: 4 / span 2; }
+@media (max-width: 700px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .cards > *, .cards > :nth-child(4), .cards > :nth-child(5) { grid-column: auto; }
+    .cards > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (max-width: 440px) {
+    .cards { grid-template-columns: 1fr; }
+    .cards > :last-child:nth-child(odd) { grid-column: auto; }
 }
 .category-card {
     background: var(--card-bg);
@@ -243,6 +256,10 @@ img { max-width: 100%; display: block; }
 .svs-fill { height: 100%; border-radius: 999px; }
 .svs-up { background: #3fa66a; }
 .svs-down { background: #d8664f; }
+.result-visuals { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; margin-top: 12px; }
+.result-visuals > * { flex: 1 1 280px; min-width: 0; margin-top: 0; }
+.price-chart { margin-top: 12px; }
+.price-chart-canvas { position: relative; height: 180px; }
 .svs-value { width: 56px; text-align: right; font-size: 0.85rem; font-weight: 700; flex-shrink: 0; }
 
 .flow-prompt { font-size: 0.85rem; color: var(--muted); margin: 8px 0 4px; }

@@ -112,10 +112,14 @@ CREATE TABLE IF NOT EXISTS user_category_prefs (
 
 -- ---------------------------------------------------------------------
 -- Quiz attempt log — every answer a user submits.
+-- session_id groups the rows from one quiz.php submission, so the
+-- dashboard can score each attempt separately. Existing databases:
+-- run sql/migrations/001_quiz_attempts_session_id.sql.
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS quiz_attempts (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     user_id       INT NOT NULL,
+    session_id    VARCHAR(40) NOT NULL,
     quiz_item_id  INT NOT NULL,
     chosen_option CHAR(1) NOT NULL,
     is_correct    TINYINT(1) NOT NULL,

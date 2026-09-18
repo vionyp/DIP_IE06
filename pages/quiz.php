@@ -5,6 +5,32 @@ require_once __DIR__ . '/../includes/streak_helper.php';
 
 const QUESTIONS_PER_ATTEMPT = 3;
 
+// A question gets the price visuals only if it is real news with both price
+// changes recorded. Shared by the pre-submit chart and the results view.
+function quiz_has_comparison(array $item): bool
+{
+    return $item['question_type'] === 'real_news'
+        && $item['price_change_stock'] !== null
+        && $item['price_change_sector'] !== null;
+}
+
+// Day -5 .. Day 0 filler values are generated in the browser before submit and
+// posted back so the results chart continues the same line. Anything that isn't
+// exactly 6 numbers is discarded (the page then regenerates its own).
+function parse_chart_history(?string $raw): ?array
+{
+    $parts = explode(',', (string)$raw);
+    if (count($parts) !== 6) {
+        return null;
+    }
+    foreach ($parts as $v) {
+        if (!is_numeric($v)) {
+            return null;
+        }
+    }
+    return array_map('floatval', $parts);
+}
+
 $category = $_GET['category'] ?? $_POST['category'] ?? '';
 if (!category_exists($category)) {
     http_response_code(404);
@@ -58,9 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $insertAttempt = $pdo->prepare('
-        INSERT INTO quiz_attempts (user_id, quiz_item_id, chosen_option, is_correct)
-        VALUES (:uid, :qid, :chosen, :correct)
+        INSERT INTO quiz_attempts (user_id, session_id, quiz_item_id, chosen_option, is_correct)
+        VALUES (:uid, :sid, :qid, :chosen, :correct)
     ');
+    // One id shared by every answer in this submission (32 hex chars).
+    $session_id = bin2hex(random_bytes(16));
 
     foreach ($quiz_items as $item) {
         $field = 'q_' . $item['id'];
@@ -73,22 +101,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($chosen !== null) {
             $insertAttempt->execute([
                 'uid'     => CURRENT_USER_ID,
+                'sid'     => $session_id,
                 'qid'     => $item['id'],
                 'chosen'  => $chosen,
                 'correct' => $is_correct ? 1 : 0,
             ]);
         }
 
-        $results[] = ['item' => $item, 'chosen' => $chosen, 'is_correct' => $is_correct];
+        $results[] = [
+            'item'       => $item,
+            'chosen'     => $chosen,
+            'is_correct' => $is_correct,
+            'history'    => parse_chart_history($_POST['chart_' . $item['id']] ?? null),
+        ];
     }
 
     $streak = update_streak($pdo, CURRENT_USER_ID);
 } else {
     // Draw a random subset from the category's question pool.
     $stmt = $pdo->prepare('
-        SELECT id, question_type, question_text, option_a, option_b, option_c
-        FROM quiz_items
-        WHERE category = :cat
+        SELECT qi.id, qi.question_type, qi.question_text, qi.option_a, qi.option_b, qi.option_c,
+               na.ticker, na.price_change_stock, na.price_change_sector
+        FROM quiz_items qi
+        LEFT JOIN news_articles na ON na.id = qi.news_article_id
+        WHERE qi.category = :cat
         ORDER BY RAND()
         LIMIT ' . QUESTIONS_PER_ATTEMPT
     );
@@ -136,6 +172,14 @@ require __DIR__ . '/../includes/header.php';
                     <input type="radio" name="q_<?= $item['id'] ?>" value="c">
                     <?= htmlspecialchars($item['option_c']) ?>
                 </label>
+
+                <?php if (quiz_has_comparison($item)): ?>
+                <div class="price-chart">
+                    <p class="svs-label"><?= htmlspecialchars($item['ticker']) ?> — the days leading up to the news (illustrative)</p>
+                    <div class="price-chart-canvas"><canvas data-price-chart="<?= $item['id'] ?>"></canvas></div>
+                    <input type="hidden" name="chart_<?= $item['id'] ?>" data-chart-history="<?= $item['id'] ?>">
+                </div>
+                <?php endif; ?>
             </fieldset>
             <?php endforeach; ?>
 
@@ -156,9 +200,7 @@ require __DIR__ . '/../includes/header.php';
             <?php
                 $item = $r['item'];
                 $options = ['a' => $item['option_a'], 'b' => $item['option_b'], 'c' => $item['option_c']];
-                $hasComparison = $item['question_type'] === 'real_news'
-                    && $item['price_change_stock'] !== null
-                    && $item['price_change_sector'] !== null;
+                $hasComparison = quiz_has_comparison($item);
             ?>
             <div class="quiz-result <?= $r['is_correct'] ? 'result-correct' : 'result-incorrect' ?>">
                 <p class="question-text"><?= htmlspecialchars($item['question_text']) ?></p>
@@ -172,6 +214,15 @@ require __DIR__ . '/../includes/header.php';
                 <p class="explanation"><?= htmlspecialchars($item['explanation']) ?></p>
 
                 <?php if ($hasComparison): ?>
+                <div class="result-visuals">
+                <div class="price-chart">
+                    <p class="svs-label"><?= htmlspecialchars($item['ticker']) ?> — Day -5 to Day +1</p>
+                    <div class="price-chart-canvas">
+                        <canvas data-price-chart="<?= $item['id'] ?>"
+                                data-day1="<?= htmlspecialchars((string)(float)$item['price_change_stock']) ?>"
+                                <?php if ($r['history'] !== null): ?>data-history="<?= htmlspecialchars(implode(',', $r['history'])) ?>"<?php endif; ?>></canvas>
+                    </div>
+                </div>
                 <div class="stock-vs-sector">
                     <p class="svs-label"><?= htmlspecialchars($item['ticker']) ?> vs. sector (SOXX)</p>
                     <div class="svs-bars">
@@ -193,6 +244,7 @@ require __DIR__ . '/../includes/header.php';
                         </div>
                     </div>
                 </div>
+                </div>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
@@ -204,5 +256,8 @@ require __DIR__ . '/../includes/header.php';
         </div>
     <?php endif; ?>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="../assets/js/price-chart.js"></script>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>
