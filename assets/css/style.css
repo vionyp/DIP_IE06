@@ -94,6 +94,21 @@ img { max-width: 100%; display: block; }
 }
 .hero-img { animation: gentle-float 4s ease-in-out infinite; }
 
+/* ---------- About section ---------- */
+.about-section {
+    max-width: 720px;
+    margin: 0 auto 40px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+}
+.about-section h2 { color: var(--brand-blue); margin-bottom: 10px; }
+.about-section p { margin: 0 0 14px; color: var(--text); }
+.about-section p:last-of-type { margin-bottom: 10px; }
+.about-section ol { margin: 0; padding-left: 22px; }
+.about-section ol li { margin-bottom: 10px; }
+.about-section ol li:last-child { margin-bottom: 0; }
+.about-section strong { color: var(--brand-blue); }
+
 /* ---------- Disclaimer modal ---------- */
 .modal-overlay {
     position: fixed;
@@ -262,7 +277,8 @@ img { max-width: 100%; display: block; }
 .price-chart-canvas { position: relative; height: 180px; }
 .svs-value { width: 56px; text-align: right; font-size: 0.85rem; font-weight: 700; flex-shrink: 0; }
 
-.flow-prompt { font-size: 0.85rem; color: var(--muted); margin: 8px 0 4px; }
+.quiz-progress, .lesson-progress { font-size: 0.85rem; color: var(--muted); font-weight: 600; margin: 0 0 12px; }
+.quiz-jump-nav { font-size: 0.85rem; margin: -12px 0 20px; }
 
 /* ---------- Dashboard ---------- */
 .streak-banner {
@@ -281,7 +297,6 @@ img { max-width: 100%; display: block; }
 .streak-longest { margin: 4px 0 0; color: var(--muted); }
 
 .category-card .score { font-weight: 700; margin-top: 10px; }
-.category-card .attempts { font-weight: 400; color: var(--muted); font-size: 0.85rem; }
 .category-card .no-data { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
 
 /* ---------- Disclaimer ---------- */

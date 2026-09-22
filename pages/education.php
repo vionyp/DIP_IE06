@@ -28,6 +28,13 @@ $stmt = $pdo->prepare('SELECT * FROM lessons WHERE category = :cat ORDER BY sort
 $stmt->execute(['cat' => $category]);
 $lessons = $stmt->fetchAll();
 
+$total = count($lessons);
+// 1-based position within this category's trail, clamped to a valid lesson.
+$pos = (int)($_GET['lesson'] ?? 1);
+$pos = max(1, min($pos, max($total, 1)));
+$lesson = $total > 0 ? $lessons[$pos - 1] : null;
+$isLast = $pos >= $total;
+
 $cat = CATEGORIES[$category];
 $base_url = '..';
 $page_title = $cat['label'] . ' — Lessons';
@@ -46,21 +53,26 @@ require __DIR__ . '/../includes/header.php';
     <?php if (empty($lessons)): ?>
         <p>No lessons have been added for this category yet.</p>
     <?php else: ?>
-        <?php foreach ($lessons as $i => $lesson): ?>
+        <p class="lesson-progress">Lesson <?= $pos ?> of <?= $total ?></p>
+
         <article class="lesson-card">
             <div class="lesson-step">
-                <img src="../assets/img/trail-node.png" alt="Lesson <?= $i + 1 ?>">
+                <img src="../assets/img/trail-node.png" alt="Lesson <?= $pos ?>">
             </div>
             <div class="lesson-body">
                 <h2><?= htmlspecialchars($lesson['title']) ?></h2>
                 <div class="lesson-text"><?= $lesson['body_html'] ?></div>
             </div>
         </article>
-        <?php endforeach; ?>
 
         <div class="lesson-cta">
+            <?php if (!$isLast): ?>
+            <a class="btn btn-secondary" href="education.php?category=<?= urlencode($category) ?>&lesson=<?= $pos + 1 ?>">
+                Next lesson →
+            </a>
+            <?php endif; ?>
             <a class="btn btn-primary" href="quiz.php?category=<?= urlencode($category) ?>">
-                Test what you just learned →
+                Start quiz →
             </a>
         </div>
     <?php endif; ?>

@@ -5,6 +5,11 @@
  * Keep this list in sync with the ENUM values in sql/schema.sql.
  */
 
+// How many questions make up one quiz attempt — shared by quiz.php (draws
+// this many, one at a time) and dashboard.php (only a session with exactly
+// this many answered rows counts as a complete "X / N" attempt).
+const QUESTIONS_PER_ATTEMPT = 5;
+
 const CATEGORIES = [
     'geopolitical' => [
         'label' => 'Political / Geopolitical',

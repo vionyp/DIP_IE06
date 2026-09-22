@@ -8,28 +8,30 @@ $stmt = $pdo->prepare('SELECT current_streak, longest_streak FROM streaks WHERE 
 $stmt->execute(['uid' => CURRENT_USER_ID]);
 $streak = $stmt->fetch() ?: ['current_streak' => 0, 'longest_streak' => 0];
 
+// Most recent COMPLETE attempt per category — a session only counts once all
+// QUESTIONS_PER_ATTEMPT questions have been answered, so the score shown is
+// always "X / QUESTIONS_PER_ATTEMPT", never a partial or an old differently-
+// sized attempt. One row per (category, session_id), newest session first,
+// so the first row seen for a category below is that category's latest
+// complete attempt.
 $stmt = $pdo->prepare('
-    SELECT category, COUNT(*) AS attempts, AVG(session_pct) AS avg_pct
-    FROM (
-        SELECT qi.category, qa.session_id, SUM(qa.is_correct) / COUNT(*) AS session_pct
-        FROM quiz_attempts qa
-        JOIN quiz_items qi ON qi.id = qa.quiz_item_id
-        WHERE qa.user_id = :uid
-        GROUP BY qi.category, qa.session_id
-    ) AS per_session
-    GROUP BY category
+    SELECT qi.category, qa.session_id,
+           COUNT(*) AS total,
+           SUM(qa.is_correct) AS correct,
+           MAX(qa.attempted_at) AS session_time
+    FROM quiz_attempts qa
+    JOIN quiz_items qi ON qi.id = qa.quiz_item_id
+    WHERE qa.user_id = :uid
+    GROUP BY qi.category, qa.session_id
+    HAVING total = :qpa
+    ORDER BY session_time DESC
 ');
-$stmt->execute(['uid' => CURRENT_USER_ID]);
+$stmt->execute(['uid' => CURRENT_USER_ID, 'qpa' => QUESTIONS_PER_ATTEMPT]);
 $byCategory = [];
 foreach ($stmt->fetchAll() as $row) {
-    $byCategory[$row['category']] = $row;
-}
-
-$stmt = $pdo->prepare('SELECT category, preferred_flow FROM user_category_prefs WHERE user_id = :uid');
-$stmt->execute(['uid' => CURRENT_USER_ID]);
-$prefs = [];
-foreach ($stmt->fetchAll() as $row) {
-    $prefs[$row['category']] = $row['preferred_flow'];
+    if (!isset($byCategory[$row['category']])) {
+        $byCategory[$row['category']] = $row;
+    }
 }
 
 $base_url = '..';
@@ -51,37 +53,22 @@ require __DIR__ . '/../includes/header.php';
     <h2>Pick a category</h2>
     <div class="cards">
         <?php foreach (CATEGORIES as $key => $cat): ?>
-            <?php
-                $stat = $byCategory[$key] ?? null;
-                $attempts = (int)($stat['attempts'] ?? 0);
-                $pct = $attempts > 0 ? (int)round($stat['avg_pct'] * 100) : null;
-                $chosenFlow = $prefs[$key] ?? null;
-            ?>
+            <?php $stat = $byCategory[$key] ?? null; ?>
             <div class="category-card" style="--cat-color: <?= htmlspecialchars($cat['color']) ?>">
                 <img src="../assets/img/<?= htmlspecialchars($cat['icon']) ?>" alt="<?= htmlspecialchars($cat['label']) ?> icon">
                 <h3><?= htmlspecialchars($cat['label']) ?></h3>
                 <p><?= htmlspecialchars($cat['blurb']) ?></p>
 
-                <?php if ($pct !== null): ?>
-                    <p class="score">Score: <strong><?= $pct ?>%</strong> <span class="attempts">(avg of <?= $attempts ?> quiz<?= $attempts === 1 ? '' : 'zes' ?>)</span></p>
+                <?php if ($stat !== null): ?>
+                    <p class="score">Score: <strong><?= (int)$stat['correct'] ?> / <?= (int)$stat['total'] ?></strong></p>
                 <?php else: ?>
                     <p class="no-data">No quizzes taken yet.</p>
                 <?php endif; ?>
 
-                <?php if ($chosenFlow): ?>
-                    <div class="card-actions">
-                        <a class="btn btn-small btn-primary"
-                           href="<?= $chosenFlow === 'education_first' ? 'education.php' : 'quiz.php' ?>?category=<?= urlencode($key) ?>">
-                            Continue <?= $chosenFlow === 'education_first' ? '(lesson)' : '(quiz)' ?>
-                        </a>
-                    </div>
-                <?php else: ?>
-                    <p class="flow-prompt">Start with the lesson, or jump straight to the quiz?</p>
-                    <div class="card-actions">
-                        <a class="btn btn-small btn-primary" href="education.php?category=<?= urlencode($key) ?>">Lesson first</a>
-                        <a class="btn btn-small btn-secondary" href="quiz.php?category=<?= urlencode($key) ?>">Quiz first</a>
-                    </div>
-                <?php endif; ?>
+                <div class="card-actions">
+                    <a class="btn btn-small btn-secondary" href="education.php?category=<?= urlencode($key) ?>">Lesson</a>
+                    <a class="btn btn-small btn-primary" href="quiz.php?category=<?= urlencode($key) ?>">Quiz</a>
+                </div>
             </div>
         <?php endforeach; ?>
     </div>

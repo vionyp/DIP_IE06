@@ -51,12 +51,19 @@ On Mac: `/Applications/XAMPP/htdocs/stocksense/`
 
 1. Start Apache **and** MySQL from the XAMPP control panel.
 2. Open `http://localhost/phpMyAdmin`.
-3. Go to **Import**, choose `sql/schema.sql`, and run it.
+3. Go to **Import**, choose `sql/schema.sql`, **set "Character set of the file"
+   to `utf8mb4`** before running it, and run it.
    - This creates the `stocksense` database, 9 tables, and seeds it with:
      6 watchlist companies (NVDA, TSM, ASML, Samsung, Intel, Micron) plus the
      SOXX sector benchmark, sample price history for both, 6 news articles
      with stock-vs-sector price deltas, 5 lessons, and an 11-question quiz
      pool spread across the 5 categories.
+   - Importing from the command line instead? Use
+     `mysql --default-character-set=utf8mb4 -u root -p stocksense < sql/schema.sql`
+     — **not** a plain `mysql -u root -p stocksense < schema.sql`. Without
+     `--default-character-set=utf8mb4` the import relies on your client's
+     default charset, and text like "SOXX —" can come out garbled even
+     though `sql/schema.sql` itself is correct UTF-8.
 4. Check `config/db.php` — the defaults (`root` / empty password / `127.0.0.1`)
    match a stock XAMPP install. If you set a MySQL root password, or created
    a dedicated `stocksense` DB user, update the constants at the top of that file.
