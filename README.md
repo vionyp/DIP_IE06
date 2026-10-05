@@ -20,10 +20,13 @@ xampp/
         ├── index.php
         ├── api/
         │   ├── fetch_prices.php
-        │   └── fetch_news.php
+        │   ├── fetch_news.php
+        │   └── save_game.php
         ├── assets/
         │   ├── css/style.css
+        │   ├── css/game.css
         │   ├── js/app.js
+        │   ├── js/trading-game.js
         │   └── img/
         ├── config/
         │   ├── db.php
@@ -37,7 +40,8 @@ xampp/
         │   ├── education.php
         │   ├── quiz.php
         │   ├── dashboard.php
-        │   └── disclaimer.php
+        │   ├── disclaimer.php
+        │   └── game.php
         └── sql/
             └── schema.sql
 ```
@@ -97,7 +101,44 @@ category the user hasn't started yet.
 
 ---
 
-## 4. Keeping data fresh (optional, not required to demo the core loop)
+## 4. Trading game (`pages/game.php`)
+
+A trading game in the style of *The Invisible Hand*. Players get $100,000 of
+play money and trade a simulated **SOXX** (semiconductor ETF) chart for up to one
+trading year, while anonymized headlines appear in a Newswire on the left.
+
+**Setup (one time, after `sql/schema.sql`):** in phpMyAdmin, select the
+`stocksense` database → **Import** → `sql/migrations/002_trading_game.sql`
+(character set `utf8mb4`). This creates `game_news` (153 headlines) and
+`game_results` (high scores). The file is safe to re-import.
+
+**Playing:** the chart moves forward on its own (pause, 1x/2x/4x speed), with
+Daily, Weekly and Yearly views. Use **Long**, **Short** and **Close position**,
+or the keyboard shortcuts Space (pause), L (long), S (short) and C (close).
+The game ends at day 252, or earlier if you click **End game**. The end screen
+compares your return with simply holding SOXX, reviews every headline you saw,
+and saves the result to the high-score table.
+
+**How prices move** (`assets/js/trading-game.js`):
+- Between headlines, the price follows a random walk.
+- Each `game_news` row has an `impact` from −3 (very bearish) to +3 (very bullish)
+  for the whole sector, judged from the lessons.
+- The headline's category decides *how* the price reacts (`IMPACT_PROFILES`):
+  geopolitical news is a sudden shock that partly reverses, earnings news gaps
+  and then drifts, macro news hits the whole sector and keeps rippling, supply-chain
+  news starts small and builds, and corporate news is a small move that fades.
+- Speed, volatility, news frequency and impact size are constants at the top
+  of that file.
+
+**News data:** `game_news` holds the same articles as `news_articles`, but real
+company names are swapped for fictional ones (e.g. Micron → Company ABC), and
+product names, people and years are made generic. The full name key is in the
+comments of the migration file. To add a headline, insert a row with a
+`category`, `impact` and one-line `explanation`. Set `is_active = 0` to hide one.
+
+---
+
+## 5. Keeping data fresh (optional, not required to demo the core loop)
 
 The site **never** calls Yahoo Finance / Finnhub / Alpha Vantage directly from a
 page load — it only ever reads from MySQL. To refresh the data:
@@ -125,7 +166,7 @@ uses one call per run for that reason.
 
 ---
 
-## 5. What's already built vs. what's next
+## 6. What's already built vs. what's next
 
 **Working end-to-end right now:**
 - Landing page with a one-time disclaimer popup
@@ -137,6 +178,7 @@ uses one call per run for that reason.
 - Stock-vs-sector comparison bars shown after every real-news question
 - Daily streak tracking (increments once per day, resets on a missed day)
 - Disclaimer page, including the stock-vs-sector framing note
+- Trading game: simulated SOXX chart, anonymized Newswire, long/short trading, high scores
 
 **Deliberately left for you to extend:**
 - A larger historical dataset — the charter's target is 20+ years of
