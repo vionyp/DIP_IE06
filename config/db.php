@@ -37,9 +37,4 @@ function get_db(): PDO
     return $pdo;
 }
 
-/**
- * v1 has no login/signup flow — every visitor acts as the single
- * seeded "guest" user (id = 1) so streaks and quiz history have
- * somewhere to persist to. Swap this out if you add real accounts.
- */
-define('CURRENT_USER_ID', 1);
+// CURRENT_USER_ID (the logged-in user's id) is defined in includes/auth.php.

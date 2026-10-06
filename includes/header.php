@@ -11,6 +11,7 @@ if (!isset($base_url)) {
     $base_url = '.';
 }
 $page_title = $page_title ?? 'StockSense';
+require_once __DIR__ . '/auth.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +19,7 @@ $page_title = $page_title ?? 'StockSense';
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($page_title) ?> · StockSense</title>
-<link rel="stylesheet" href="<?= $base_url ?>/assets/css/style.css">
+<link rel="stylesheet" href="<?= $base_url ?>/assets/css/style.css?v=<?= filemtime(__DIR__ . '/../assets/css/style.css') ?>">
 <?php foreach (($extra_css ?? []) as $css): ?>
 <link rel="stylesheet" href="<?= $base_url ?>/<?= htmlspecialchars($css) ?>">
 <?php endforeach; ?>
@@ -34,6 +35,15 @@ $page_title = $page_title ?? 'StockSense';
             <a href="<?= $base_url ?>/pages/dashboard.php">Dashboard</a>
             <a href="<?= $base_url ?>/pages/game.php">Trading Game</a>
             <a href="<?= $base_url ?>/pages/disclaimer.php">Disclaimer</a>
+            <?php if (is_logged_in()): ?>
+            <span class="nav-user"><?= htmlspecialchars((string)current_username()) ?></span>
+            <form method="post" action="<?= $base_url ?>/pages/logout.php" class="nav-logout">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
+                <button type="submit">Log out</button>
+            </form>
+            <?php else: ?>
+            <a href="<?= $base_url ?>/pages/login.php" data-auth-open="login" class="nav-cta">Log in / Register</a>
+            <?php endif; ?>
         </nav>
     </div>
 </header>

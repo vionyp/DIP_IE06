@@ -35,8 +35,12 @@ xampp/
         ├── includes/
         │   ├── header.php
         │   ├── footer.php
+        │   ├── auth.php
+        │   ├── auth_card.php
         │   └── streak_helper.php
         ├── pages/
+        │   ├── login.php
+        │   ├── logout.php
         │   ├── education.php
         │   ├── quiz.php
         │   ├── dashboard.php
@@ -71,14 +75,33 @@ On Mac: `/Applications/XAMPP/htdocs/stocksense/`
 4. Check `config/db.php` — the defaults (`root` / empty password / `127.0.0.1`)
    match a stock XAMPP install. If you set a MySQL root password, or created
    a dedicated `stocksense` DB user, update the constants at the top of that file.
+5. **Existing database only** (imported `sql/schema.sql` before login was added):
+   select the `stocksense` database → **Import** → `sql/migrations/003_login_answers.sql`.
+   This creates the `answers` table. Fresh imports of `sql/schema.sql` already have it.
+
+### Accounts and saved answers
+
+The dashboard, lessons, quizzes and trading game need an account: visiting
+them while logged out sends you to `pages/login.php`, which has a **Log in** and a
+**Register** tab in one card (`includes/auth_card.php`). On the public pages the
+same card opens as a popup. Session handling lives in `includes/auth.php`.
+
+- `users` stores `username` and `password_hash` — the output of PHP's
+  `password_hash()`, never the plain password. Login checks it with `password_verify()`.
+- `answers` stores each user's current answer per question
+  (`user_id`, `question_id`, `answer`, `is_correct`, `answered_at`), with
+  `(user_id, question_id)` as the primary key. Answering the same question again
+  **updates** that row (`INSERT ... ON DUPLICATE KEY UPDATE` in `pages/quiz.php`)
+  instead of adding a new one. `quiz_attempts` still logs every attempt, which is
+  what the dashboard scores are built from.
 
 ---
 
 ## 3. Running it
 
 Visit `http://localhost/stocksense/`. You'll land on the hero page with a
-one-time disclaimer popup, then "Enter the dashboard" to see the 5 category
-cards, your streak, and your per-category score.
+one-time disclaimer popup, then "Enter the dashboard" — register or log in
+first — to see the 5 category cards, your streak, and your per-category score.
 
 ### The updated flow
 
@@ -179,6 +202,7 @@ uses one call per run for that reason.
 - Daily streak tracking (increments once per day, resets on a missed day)
 - Disclaimer page, including the stock-vs-sector framing note
 - Trading game: simulated SOXX chart, anonymized Newswire, long/short trading, high scores
+- User accounts: register, log in, log out; quiz answers, streaks and game scores are saved per user
 
 **Deliberately left for you to extend:**
 - A larger historical dataset — the charter's target is 20+ years of
@@ -186,8 +210,6 @@ uses one call per run for that reason.
   here is a small illustrative starting pool, not that full dataset
 - More quiz questions per category (schema already supports any number —
   add rows to `quiz_items` and, for real-news items, to `news_articles`)
-- User accounts/login (currently a single `guest` user, id = 1, by design —
-  see `config/db.php`)
 - Reminder notifications for the streak feature
 - Light entrance/scroll animations beyond the current mascot float/pop
   effects, if more motion is wanted

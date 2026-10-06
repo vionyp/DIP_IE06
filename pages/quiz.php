@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/categories.php';
 require_once __DIR__ . '/../includes/streak_helper.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_login();
 
 // A question gets the price visuals only if it is real news with both price
 // changes recorded. Shared by the pre-submit chart and the results view.
@@ -266,6 +268,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ')->execute([
             'uid'     => CURRENT_USER_ID,
             'sid'     => $session_id,
+            'qid'     => $item['id'],
+            'chosen'  => $chosen,
+            'correct' => $is_correct ? 1 : 0,
+        ]);
+
+        // answers holds one row per (user, question): answering a question
+        // again updates that row instead of inserting a second one.
+        $pdo->prepare('
+            INSERT INTO answers (user_id, question_id, answer, is_correct)
+            VALUES (:uid, :qid, :chosen, :correct)
+            ON DUPLICATE KEY UPDATE
+                answer = VALUES(answer),
+                is_correct = VALUES(is_correct),
+                answered_at = CURRENT_TIMESTAMP
+        ')->execute([
+            'uid'     => CURRENT_USER_ID,
             'qid'     => $item['id'],
             'chosen'  => $chosen,
             'correct' => $is_correct ? 1 : 0,

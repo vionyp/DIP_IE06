@@ -17,7 +17,7 @@ require __DIR__ . '/includes/header.php';
            actual move next to the sector average. No trading, no portfolio, just news literacy.</p>
 
         <div class="flow-choice">
-            <a class="btn btn-primary" href="pages/dashboard.php">Enter the dashboard →</a>
+            <a class="btn btn-primary" href="pages/dashboard.php"<?= is_logged_in() ? '' : ' data-auth-open="login"' ?>>Enter the dashboard →</a>
         </div>
     </div>
 </section>

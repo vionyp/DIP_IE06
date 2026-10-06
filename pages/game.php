@@ -16,6 +16,8 @@
  */
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/categories.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_login();
 
 const GAME_START_CASH = 100000;
 

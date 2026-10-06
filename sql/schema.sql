@@ -127,8 +127,9 @@ EXECUTE add_col_stmt;
 DEALLOCATE PREPARE add_col_stmt;
 
 -- ---------------------------------------------------------------------
--- Users — v1 has no login/signup flow; a single "guest" row (id = 1)
--- is used so streaks/attempts always have somewhere to write to.
+-- Users — accounts created on pages/login.php (Register tab). password_hash holds
+-- password_hash() output, never the plain password. The seeded "guest"
+-- row (id = 1) predates login; it has no password, so it cannot log in.
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS users (
     id             INT AUTO_INCREMENT PRIMARY KEY,
@@ -166,6 +167,23 @@ CREATE TABLE IF NOT EXISTS quiz_attempts (
     attempted_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (quiz_item_id) REFERENCES quiz_items(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- Answers — each user's CURRENT answer to each quiz question.
+-- One row per (user, question): answering the same question again updates
+-- that row instead of adding a new one (quiz_attempts above keeps the full
+-- history). Existing databases: run sql/migrations/003_login_answers.sql.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS answers (
+    user_id      INT NOT NULL,
+    question_id  INT NOT NULL,
+    answer       CHAR(1) NOT NULL,
+    is_correct   TINYINT(1) NOT NULL,
+    answered_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, question_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES quiz_items(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
