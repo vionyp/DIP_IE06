@@ -5,7 +5,8 @@
  * directly inside /pages/ or as index.php in the project root — the
  * $base_url variable adjusts asset/link paths accordingly.
  * Optional: $extra_css (array of stylesheet paths relative to $base_url)
- * for page-specific styles, and $main_class (extra class on <main>).
+ * for page-specific styles, $main_class (extra class on <main>), and
+ * $show_ticker = true to show the scrolling ticker strip under the navbar.
  */
 if (!isset($base_url)) {
     $base_url = '.';
@@ -34,6 +35,7 @@ require_once __DIR__ . '/auth.php';
             <a href="<?= $base_url ?>/index.php">Home</a>
             <a href="<?= $base_url ?>/pages/dashboard.php">Dashboard</a>
             <a href="<?= $base_url ?>/pages/game.php">Trading Game</a>
+            <a href="<?= $base_url ?>/pages/forum.php">Forum</a>
             <a href="<?= $base_url ?>/pages/disclaimer.php">Disclaimer</a>
             <?php if (is_logged_in()): ?>
             <span class="nav-user"><?= htmlspecialchars((string)current_username()) ?></span>
@@ -47,4 +49,5 @@ require_once __DIR__ . '/auth.php';
         </nav>
     </div>
 </header>
+<?php if (!empty($show_ticker)) { require __DIR__ . '/ticker.php'; } ?>
 <main class="site-main<?= isset($main_class) ? ' ' . htmlspecialchars($main_class) : '' ?>">

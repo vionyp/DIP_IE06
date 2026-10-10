@@ -161,7 +161,31 @@ comments of the migration file. To add a headline, insert a row with a
 
 ---
 
-## 5. Keeping data fresh (optional, not required to demo the core loop)
+## 5. Forum (`pages/forum.php`)
+
+A question-and-answer forum grouped into boards: Beginner Questions, the five
+news categories, and Trading Game. Anyone can read it; asking, replying and
+liking need an account.
+
+**Setup (one time, after `sql/schema.sql`):** in phpMyAdmin, select the
+`stocksense` database → **Import** → `sql/migrations/004_forum.sql`
+(character set `utf8mb4`). This creates `forum_topics`, `forum_posts` and
+`forum_likes`, and adds a few **sample** discussions so the forum is not empty.
+The sample accounts have no password, so nobody can log in as them; the comment
+in the migration file shows how to remove them. The file is safe to re-import.
+
+- **Boards** are the fixed list in `config/forum.php` (not a table). Add an
+  entry there to add a board.
+- **Moderators** are the usernames in `FORUM_MODERATORS` in `config/forum.php`
+  (default: `admin`). A moderator can pin topics and delete any topic or reply;
+  everyone else can delete only what they wrote. Register the `admin` account
+  yourself on a new install, before anyone else takes the name.
+- A topic's question is its first row in `forum_posts`; deleting a topic removes
+  its replies and likes with it.
+
+---
+
+## 6. Keeping data fresh (optional, not required to demo the core loop)
 
 The site **never** calls Yahoo Finance / Finnhub / Alpha Vantage directly from a
 page load — it only ever reads from MySQL. To refresh the data:
@@ -189,7 +213,7 @@ uses one call per run for that reason.
 
 ---
 
-## 6. What's already built vs. what's next
+## 7. What's already built vs. what's next
 
 **Working end-to-end right now:**
 - Landing page with a one-time disclaimer popup

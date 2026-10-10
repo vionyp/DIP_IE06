@@ -53,23 +53,32 @@ require __DIR__ . '/../includes/header.php';
     </div>
 
     <h2>Pick a category</h2>
-    <div class="cards">
+    <!-- Each card expands on hover / keyboard focus (tap on touch screens) to show
+         its blurb, what Lesson and Quiz do ('overview' in config/categories.php)
+         and the two buttons. See "Hover-to-expand category cards" in style.css. -->
+    <div class="cards expand-cards" data-expand-cards>
         <?php foreach (CATEGORIES as $key => $cat): ?>
             <?php $stat = $byCategory[$key] ?? null; ?>
             <div class="category-card" style="--cat-color: <?= htmlspecialchars($cat['color']) ?>">
-                <img src="../assets/img/<?= htmlspecialchars($cat['icon']) ?>" alt="<?= htmlspecialchars($cat['label']) ?> icon">
-                <h3><?= htmlspecialchars($cat['label']) ?></h3>
-                <p><?= htmlspecialchars($cat['blurb']) ?></p>
+                <div class="card-main">
+                    <img src="../assets/img/<?= htmlspecialchars($cat['icon']) ?>" alt="<?= htmlspecialchars($cat['label']) ?> icon">
+                    <h3><button type="button" class="card-toggle" aria-expanded="false" aria-controls="card-more-<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($cat['label']) ?></button></h3>
 
-                <?php if ($stat !== null): ?>
-                    <p class="score">Score: <strong><?= (int)$stat['correct'] ?> / <?= (int)$stat['total'] ?></strong></p>
-                <?php else: ?>
-                    <p class="no-data">No quizzes taken yet.</p>
-                <?php endif; ?>
+                    <?php if ($stat !== null): ?>
+                        <p class="score">Score: <strong><?= (int)$stat['correct'] ?> / <?= (int)$stat['total'] ?></strong></p>
+                    <?php else: ?>
+                        <p class="no-data">No quizzes taken yet.</p>
+                    <?php endif; ?>
+                </div>
 
-                <div class="card-actions">
-                    <a class="btn btn-small btn-secondary" href="education.php?category=<?= urlencode($key) ?>">Lesson</a>
-                    <a class="btn btn-small btn-primary" href="quiz.php?category=<?= urlencode($key) ?>">Quiz</a>
+                <div class="card-more" id="card-more-<?= htmlspecialchars($key) ?>">
+                    <p><?= htmlspecialchars($cat['blurb']) ?></p>
+                    <p class="card-overview"><?= htmlspecialchars($cat['overview']) ?></p>
+
+                    <div class="card-actions">
+                        <a class="btn btn-small btn-secondary" href="education.php?category=<?= urlencode($key) ?>">Lesson</a>
+                        <a class="btn btn-small btn-primary" href="quiz.php?category=<?= urlencode($key) ?>">Quiz →</a>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>

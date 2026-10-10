@@ -391,7 +391,7 @@ require __DIR__ . '/../includes/header.php';
                 <?php endif; ?>
             </fieldset>
 
-            <button type="submit" class="btn btn-primary">Submit answer</button>
+            <button type="submit" class="btn btn-primary btn-doodle doodle-chart doodle-right">Submit answer</button>
         </form>
 
     <?php elseif ($mode === 'feedback'): ?>

@@ -73,7 +73,7 @@ require __DIR__ . '/../includes/header.php';
                 Next lesson →
             </a>
             <?php endif; ?>
-            <a class="btn btn-primary" href="quiz.php?category=<?= urlencode($category) ?>">
+            <a class="btn btn-primary btn-doodle doodle-sparkle doodle-right" href="quiz.php?category=<?= urlencode($category) ?>">
                 Start quiz →
             </a>
         </div>

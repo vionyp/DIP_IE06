@@ -5,6 +5,58 @@ $pdo = get_db();
 
 $base_url = '.';
 $page_title = 'Learn semiconductor market news';
+$show_ticker = true;
+
+// The three panels of the overview banner under the hero. 'detail' and 'cta'
+// are what a panel reveals when it expands (hover or keyboard focus).
+$overview_panels = [
+    [
+        'title'   => 'Learn',
+        'tagline' => 'Short lessons on what moves chip stocks',
+        'detail'  => 'Pick a news category and follow its lesson trail, one idea at a time.',
+        'cta'     => 'Start learning',
+        'href'    => 'pages/dashboard.php',
+        'img'     => 'overview-learn.svg',
+    ],
+    [
+        'title'   => 'Quiz',
+        'tagline' => 'Test yourself on semiconductor news',
+        'detail'  => 'Guess how a stock reacted to a headline, then see the answer, an explanation and how the sector moved.',
+        'cta'     => 'Take a quiz',
+        'href'    => 'pages/dashboard.php',
+        'img'     => 'overview-quiz.svg',
+    ],
+    [
+        'title'   => 'Trading Game',
+        'tagline' => 'Trade the news with play money',
+        'detail'  => 'Go long or short on a simulated SOXX chart with $100,000 of play money while headlines come in.',
+        'cta'     => 'Play the game',
+        'href'    => 'pages/game.php',
+        'img'     => 'overview-game.svg',
+    ],
+];
+
+// The "Why StockSense" columns: one icon, a title and a couple of lines each.
+$usp_points = [
+    [
+        'title' => 'Built for EEE/IEM students',
+        'text'  => 'The business and market side of the industry you are training to enter, not generic finance content.',
+        'img'   => 'usp-students.svg',
+        'tint'  => '#dfe7f3',
+    ],
+    [
+        'title' => 'News-first, not chart-first',
+        'text'  => 'Questions start from a news event, so you learn what kind of news causes what kind of move.',
+        'img'   => 'usp-news.svg',
+        'tint'  => '#fbe8d3',
+    ],
+    [
+        'title' => 'Learning that sticks',
+        'text'  => 'Daily streaks and a bite-sized lesson trail turn sector news into a low-pressure habit.',
+        'img'   => 'usp-habit.svg',
+        'tint'  => '#dcf0e4',
+    ],
+];
 require __DIR__ . '/includes/header.php';
 ?>
 
@@ -17,9 +69,27 @@ require __DIR__ . '/includes/header.php';
            actual move next to the sector average. No trading, no portfolio, just news literacy.</p>
 
         <div class="flow-choice">
-            <a class="btn btn-primary" href="pages/dashboard.php"<?= is_logged_in() ? '' : ' data-auth-open="login"' ?>>Enter the dashboard →</a>
+            <a class="btn btn-primary btn-doodle doodle-arrows" href="pages/dashboard.php"<?= is_logged_in() ? '' : ' data-auth-open="login"' ?>>Enter the dashboard →</a>
         </div>
     </div>
+</section>
+
+<!-- Overview banner: three panels side by side; the hovered / focused one widens
+     and shows what it leads to. Text comes from $overview_panels at the top. -->
+<section class="overview-banner" aria-label="What you can do on StockSense">
+    <?php foreach ($overview_panels as $panel): ?>
+    <a class="overview-panel" href="<?= htmlspecialchars($panel['href']) ?>">
+        <span class="overview-main">
+            <img src="assets/img/<?= htmlspecialchars($panel['img']) ?>" alt="" width="120" height="96">
+            <span class="overview-title"><?= htmlspecialchars($panel['title']) ?></span>
+            <span class="overview-tagline"><?= htmlspecialchars($panel['tagline']) ?></span>
+        </span>
+        <span class="overview-more">
+            <span class="overview-detail"><?= htmlspecialchars($panel['detail']) ?></span>
+            <span class="overview-cta"><?= htmlspecialchars($panel['cta']) ?> →</span>
+        </span>
+    </a>
+    <?php endforeach; ?>
 </section>
 
 <section class="about-section">
@@ -32,36 +102,19 @@ require __DIR__ . '/includes/header.php';
        <a href="pages/disclaimer.php">disclaimer</a> for the full picture.</p>
 </section>
 
-<section class="about-section">
+<section class="usp-section">
     <h2>Why StockSense</h2>
-    <p>Most students learning about semiconductor stocks fall into one of two gaps. Generic
-       investing apps teach broad market basics with no sector focus, so an EEE or IEM student
-       gets no context for the industry they're actually heading into. Professional platforms like
-       Bloomberg Terminal go the other way: built for institutional traders, assuming knowledge
-       most students don't have yet. StockSense sits in the space between these, built specifically
-       for students who already care about semiconductors because it's their field, not because
-       they're day traders.</p>
-    <p>Second, most tools that do exist teach price and trend reading in isolation: candlesticks,
-       moving averages, chart patterns. That teaches you to read a chart, not to understand why it
-       moved. StockSense flips the emphasis to cause and effect. Every quiz question is anchored to
-       a real news event (export controls, an earnings call, a fab outage) and asks the student to
-       reason about how that specific category of news tends to move semiconductor stocks. The
-       stock-vs-sector comparison then shows whether the reaction was company-specific or
-       sector-wide, which is the kind of judgment an analyst actually needs, not just chart
-       literacy.</p>
-    <p>In short, StockSense's USP rests on three things:</p>
-    <ol>
-        <li><strong>Built for EEE/IEM students specifically.</strong> It teaches the business and
-            market side of the industry these students are training to enter, so it's
-            career-relevant rather than generic finance content.</li>
-        <li><strong>News-first, not chart-first.</strong> Instead of teaching students to read
-            price movement, it teaches them to reason about what kind of news causes what kind of
-            movement, which is a transferable analytical skill rather than pattern memorization.</li>
-        <li><strong>Design that makes the learning stick.</strong> A Duolingo-style streak and
-            progress system paired with a Babypips-style course trail turns a normally dry topic
-            (sector news analysis) into a low-pressure, bite-sized habit, so students actually
-            finish it instead of bouncing off a wall of financial jargon.</li>
-    </ol>
+    <div class="usp-grid">
+        <?php foreach ($usp_points as $usp): ?>
+        <div class="usp-item">
+            <span class="usp-icon" style="--usp-tint: <?= htmlspecialchars($usp['tint']) ?>">
+                <img src="assets/img/<?= htmlspecialchars($usp['img']) ?>" alt="" width="64" height="64">
+            </span>
+            <h3><?= htmlspecialchars($usp['title']) ?></h3>
+            <p><?= htmlspecialchars($usp['text']) ?></p>
+        </div>
+        <?php endforeach; ?>
+    </div>
 </section>
 
 <!-- Disclaimer popup — shown once per browser via localStorage (see assets/js/app.js) -->

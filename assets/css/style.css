@@ -71,6 +71,71 @@ img { max-width: 100%; display: block; }
 }
 .nav-logout button:hover { color: var(--brand-blue); }
 
+/* ---------- Ticker (strip under the navbar) ----------
+   Markup: includes/ticker.php. Headline count and speed: config/ticker.php.
+   The list is printed twice and the track slides left by exactly one copy,
+   so the loop has no gap or jump. */
+.ticker {
+    --ticker-duration: 35s;    /* one full loop; set per page load from TICKER_SECONDS_PER_ITEM */
+    --ticker-gap: 22px;        /* space either side of each separator dot */
+    --ticker-fade: 8%;         /* width of the faded edge on each side */
+    background: var(--brand-blue);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.ticker-fade {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--ticker-fade), #000 calc(100% - var(--ticker-fade)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--ticker-fade), #000 calc(100% - var(--ticker-fade)), transparent);
+}
+.ticker-track {
+    display: flex;
+    width: max-content;
+    animation: ticker-scroll var(--ticker-duration) linear infinite;
+}
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker-group {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: space-around;
+    min-width: 100vw;          /* keeps the loop seamless when the list is short */
+    margin: 0;
+    padding: 9px 0;
+    list-style: none;
+}
+.ticker-group li { display: flex; align-items: center; white-space: nowrap; }
+.ticker-group a { color: inherit; }
+.ticker-symbol {
+    margin-right: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+.ticker-date { margin-left: 10px; font-size: 0.8rem; font-weight: 400; opacity: 0.75; }
+.ticker-group li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    margin: 0 var(--ticker-gap);
+    border-radius: 50%;
+    background: var(--brand-orange);
+}
+@keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ticker-fade { -webkit-mask-image: none; mask-image: none; }
+    .ticker-track { width: auto; animation: none; }
+    .ticker-group { flex-wrap: wrap; justify-content: center; min-width: 0; width: 100%; padding: 9px 16px; }
+    .ticker-group[aria-hidden="true"] { display: none; }
+    .ticker-group li { white-space: normal; }
+}
+
 .site-main {
     max-width: 1000px;
     margin: 0 auto;
@@ -88,6 +153,52 @@ img { max-width: 100%; display: block; }
     font-size: 1rem;
 }
 .btn:hover { text-decoration: none; opacity: 0.92; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Hover animation for every button: a small lift and a soft ring. */
+.btn { transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, opacity 0.18s ease-out; }
+.btn:hover:not(:disabled),
+.btn:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(44, 74, 124, 0.35);
+}
+.btn:active:not(:disabled) { transform: translateY(0); }
+
+/* Doodles that pop up beside a button on hover / keyboard focus.
+   Add .btn-doodle plus one of .doodle-arrows / .doodle-sparkle / .doodle-chart
+   to a button. Add .doodle-right to draw only the right-hand one (use it when
+   something sits directly to the button's left). The drawings are the SVG
+   files in assets/img/doodles/. */
+.btn-doodle { position: relative; }
+.doodle-arrows  { --doodle: url("../img/doodles/arrows.svg"); }
+.doodle-sparkle { --doodle: url("../img/doodles/sparkle.svg"); }
+.doodle-chart   { --doodle: url("../img/doodles/chart.svg"); }
+@media (hover: hover) {
+    .btn-doodle::before,
+    .btn-doodle::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 52px;
+        height: 52px;
+        background: var(--doodle) center / contain no-repeat;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease-out, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    /* Left one as drawn; right one mirrored so both point at the button. */
+    .btn-doodle::before { right: calc(100% + 10px); transform: translateY(-50%) scale(0.5) rotate(-14deg); }
+    .btn-doodle::after  { left: calc(100% + 10px);  transform: translateY(-50%) scaleX(-1) scale(0.5) rotate(-14deg); }
+    .btn-doodle.doodle-right::before { display: none; }
+    .btn-doodle:hover::before,
+    .btn-doodle:focus-visible::before { opacity: 1; transform: translateY(-50%); }
+    .btn-doodle:hover::after,
+    .btn-doodle:focus-visible::after { opacity: 1; transform: translateY(-50%) scaleX(-1); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .btn, .btn-doodle::before, .btn-doodle::after { transition: opacity 0.01ms; }
+    .btn:hover:not(:disabled), .btn:focus-visible { transform: none; }
+}
 .btn-primary { background: var(--brand-blue); color: #fff; }
 .btn-secondary { background: #fff; color: var(--brand-blue); border: 2px solid var(--brand-blue); }
 .btn-small { padding: 8px 16px; font-size: 0.9rem; }
@@ -113,6 +224,106 @@ img { max-width: 100%; display: block; }
     50% { transform: translateY(-8px); }
 }
 .hero-img { animation: gentle-float 4s ease-in-out infinite; }
+
+/* ---------- Overview banner (landing page: Learn / Quiz / Trading Game) ----------
+   One blue band of three link panels. With a mouse on a wide screen the
+   hovered / focused panel widens and fades in its detail text and button
+   while the others dim; otherwise the panels stack with everything shown. */
+.overview-banner {
+    --overview-grow: 1.7;      /* how much wider the open panel gets */
+    --overview-height: 350px;  /* band height on wide screens */
+    --overview-speed: 350ms;
+    display: flex;
+    flex-direction: column;
+    margin: 0 0 48px;
+    border-radius: 24px;
+    overflow: hidden;
+    background: url("../img/doodles/pattern.svg"), linear-gradient(160deg, var(--brand-blue), #41679f);
+    box-shadow: 0 18px 50px rgba(44, 74, 124, 0.16);
+}
+.overview-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 22px;
+    color: #fff;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    transition: flex-grow var(--overview-speed) cubic-bezier(0.4, 0, 0.2, 1),
+                background-color var(--overview-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+.overview-panel:first-child { border-top: none; }
+.overview-panel:hover { text-decoration: none; }
+.overview-panel:focus-visible { outline: 3px solid var(--brand-orange); outline-offset: -3px; }
+.overview-main, .overview-more { display: flex; flex-direction: column; align-items: center; }
+.overview-main { transition: transform var(--overview-speed) cubic-bezier(0.4, 0, 0.2, 1), opacity var(--overview-speed) ease; }
+.overview-main img { width: 110px; height: auto; margin-bottom: 14px; transition: transform var(--overview-speed) cubic-bezier(0.4, 0, 0.2, 1); }
+.overview-title { font-size: 1.35rem; font-weight: 800; }
+.overview-tagline { margin-top: 4px; font-size: 0.95rem; opacity: 0.9; }
+.overview-detail { margin-top: 14px; max-width: 320px; font-size: 0.9rem; }
+.overview-cta {
+    margin-top: 16px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--brand-blue);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+@media (hover: hover) and (min-width: 801px) {
+    .overview-banner { flex-direction: row; height: var(--overview-height); }
+    .overview-panel { flex: 1 1 0; min-width: 0; overflow: hidden; border-top: none; border-left: 1px solid rgba(255, 255, 255, 0.16); }
+    .overview-panel:first-child { border-left: none; }
+    .overview-main { transform: translateY(46px); }
+    .overview-main img { transform: scale(0.88); }
+    .overview-more { opacity: 0; transition: opacity 150ms ease; }
+
+    .overview-panel:hover,
+    .overview-panel:focus-visible { flex-grow: var(--overview-grow); background-color: rgba(255, 255, 255, 0.1); }
+    .overview-panel:hover .overview-main,
+    .overview-panel:focus-visible .overview-main,
+    .overview-panel:hover .overview-main img,
+    .overview-panel:focus-visible .overview-main img { transform: none; }
+    .overview-panel:hover .overview-more,
+    .overview-panel:focus-visible .overview-more { opacity: 1; transition: opacity var(--overview-speed) ease 150ms; }
+
+    /* The panels that are not open dim */
+    .overview-banner:hover .overview-panel:not(:hover) .overview-main,
+    .overview-banner:has(:focus-visible) .overview-panel:not(:focus-visible):not(:hover) .overview-main { opacity: 0.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .overview-panel, .overview-main, .overview-main img, .overview-more { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+}
+
+/* ---------- "Why StockSense" columns ---------- */
+.usp-section {
+    margin: 0 auto 40px;
+    padding: 40px 0 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+.usp-section h2 { margin: 0 0 32px; color: var(--brand-blue); font-size: 1.7rem; }
+.usp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.usp-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 88px;
+    margin-bottom: 14px;
+    background: var(--usp-tint, #dfe7f3);
+    /* uneven corners make the soft "blob" behind the icon */
+    border-radius: 58% 42% 55% 45% / 48% 60% 40% 52%;
+}
+.usp-item:nth-child(2) .usp-icon { border-radius: 44% 56% 40% 60% / 58% 44% 56% 42%; }
+.usp-item:nth-child(3) .usp-icon { border-radius: 52% 48% 62% 38% / 42% 54% 46% 58%; }
+.usp-icon img { width: 60px; height: 60px; }
+.usp-item h3 { margin: 0 0 8px; font-size: 1.1rem; }
+.usp-item p { margin: 0 auto; max-width: 280px; color: var(--muted); font-size: 0.95rem; }
+@media (max-width: 700px) {
+    .usp-grid { grid-template-columns: 1fr; gap: 28px; }
+}
 
 /* ---------- About section ---------- */
 .about-section {
@@ -186,6 +397,125 @@ img { max-width: 100%; display: block; }
 .category-card h3 { margin: 0 0 8px; font-size: 1.05rem; }
 .category-card p { color: var(--muted); font-size: 0.9rem; min-height: 48px; }
 .card-actions { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+
+/* ---------- Hover-to-expand category cards (dashboard) ----------
+   The row is .cards.expand-cards. On a wide screen with a mouse the cards
+   sit side by side; the hovered / keyboard-focused one grows, takes its
+   category colour and reveals .card-more, while the others shrink and fade.
+   On touch or narrow screens they stack and assets/js/app.js opens one on
+   tap (.is-open). Tune it with the four variables below. */
+.expand-cards {
+    --expand-grow: 2.4;        /* how much wider the open card is than a closed one */
+    --expand-height: 440px;    /* row height on wide screens */
+    --expand-speed: 350ms;
+    --expand-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.expand-cards .category-card {
+    /* Open-card background: the category colour, darkened so white text stays readable. */
+    --cat-deep: var(--cat-color, var(--brand-blue));
+    transition: flex-grow var(--expand-speed) var(--expand-ease),
+                background-color var(--expand-speed) var(--expand-ease),
+                color var(--expand-speed) var(--expand-ease);
+}
+@supports (color: color-mix(in srgb, red, blue)) {
+    .expand-cards .category-card { --cat-deep: color-mix(in srgb, var(--cat-color, var(--brand-blue)) 78%, #000); }
+}
+/* The icon PNGs have a white background, so they sit in a round white badge. */
+.expand-cards .category-card img {
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fff;
+}
+.expand-cards .category-card p { min-height: 0; margin: 0 0 10px; transition: color var(--expand-speed) var(--expand-ease); }
+.expand-cards .category-card h3 { overflow-wrap: break-word; }
+.card-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+.card-main { transition: transform var(--expand-speed) var(--expand-ease), opacity var(--expand-speed) var(--expand-ease); }
+.card-main img { transition: transform var(--expand-speed) var(--expand-ease); }
+.card-overview { font-weight: 600; }
+
+/* Side by side, expand on hover / focus */
+@media (hover: hover) and (min-width: 901px) {
+    .expand-cards { display: flex; gap: 16px; height: var(--expand-height); }
+    .expand-cards .category-card { flex: 1 1 0; min-width: 0; padding: 20px 12px; overflow: hidden; }
+    .expand-cards .card-main { transform: translateY(72px); }
+    .expand-cards .card-main img { width: 96px; height: 96px; transform: scale(0.72); transform-origin: center bottom; }
+    .expand-cards .card-more {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 150ms var(--expand-ease);
+    }
+
+    .expand-cards .category-card:hover,
+    .expand-cards .category-card:has(:focus-visible) {
+        flex-grow: var(--expand-grow);
+        background: var(--cat-deep);
+        border-color: var(--cat-deep);
+        color: #fff;
+    }
+    .expand-cards .category-card:hover p,
+    .expand-cards .category-card:has(:focus-visible) p { color: inherit; }
+    .expand-cards .category-card:hover .card-main,
+    .expand-cards .category-card:has(:focus-visible) .card-main,
+    .expand-cards .category-card:hover .card-main img,
+    .expand-cards .category-card:has(:focus-visible) .card-main img { transform: none; }
+    .expand-cards .category-card:hover .card-more,
+    .expand-cards .category-card:has(:focus-visible) .card-more {
+        opacity: 1;
+        pointer-events: auto;
+        transition: opacity var(--expand-speed) var(--expand-ease) 150ms;
+    }
+    .expand-cards .category-card:hover .btn-primary,
+    .expand-cards .category-card:has(:focus-visible) .btn-primary { background: #fff; color: var(--cat-deep); }
+    .expand-cards .category-card:hover .btn-secondary,
+    .expand-cards .category-card:has(:focus-visible) .btn-secondary { background: transparent; color: #fff; border-color: #fff; }
+
+    /* The cards that are not open fade back */
+    .expand-cards:hover .category-card:not(:hover) .card-main,
+    .expand-cards:has(:focus-visible) .category-card:not(:has(:focus-visible)):not(:hover) .card-main { opacity: 0.45; }
+}
+
+/* Stacked, expand on tap */
+@media (hover: none), (max-width: 900px) {
+    .expand-cards { display: flex; flex-direction: column; gap: 12px; }
+    .expand-cards .card-main img { width: 64px; height: 64px; }
+    .expand-cards.is-enhanced .category-card { cursor: pointer; }
+    .expand-cards.is-enhanced .card-toggle::after { content: " +"; color: var(--cat-color, var(--brand-blue)); }
+    .expand-cards.is-enhanced .card-more {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transition: max-height var(--expand-speed) var(--expand-ease),
+                    opacity var(--expand-speed) var(--expand-ease),
+                    visibility 0s var(--expand-speed);
+    }
+    .expand-cards .category-card.is-open { background: var(--cat-deep); border-color: var(--cat-deep); color: #fff; }
+    .expand-cards .category-card.is-open p { color: inherit; }
+    .expand-cards.is-enhanced .category-card.is-open .card-toggle::after { content: " \2212"; color: inherit; }
+    .expand-cards.is-enhanced .category-card.is-open .card-more {
+        max-height: 420px;
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0s;
+    }
+    .expand-cards .category-card.is-open .btn-primary { background: #fff; color: var(--cat-deep); }
+    .expand-cards .category-card.is-open .btn-secondary { background: transparent; color: #fff; border-color: #fff; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .expand-cards .category-card,
+    .expand-cards .category-card p,
+    .expand-cards .card-main,
+    .expand-cards .card-main img,
+    .expand-cards .card-more { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+}
 
 /* ---------- Lesson trail / quiz shared heading ---------- */
 .trail-heading {
@@ -461,6 +791,162 @@ img { max-width: 100%; display: block; }
     .auth-modal-box { max-width: 420px; }
     .auth-close { color: #fff; }
     .auth-modal .auth-main { padding-top: 24px; }
+}
+
+/* ---------- Forum ---------- */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+.forum-empty { color: var(--muted); }
+.forum-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.forum-head h1 { margin: 0 0 4px; }
+.forum-head p { margin: 0; color: var(--muted); }
+.forum-board-heading { padding-left: 14px; border-left: 6px solid var(--cat-color, var(--brand-blue)); }
+.forum-crumbs { margin: 0 0 14px; font-size: 0.9rem; color: var(--muted); }
+.forum-col-title { margin: 0 0 10px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+.forum-home { display: grid; grid-template-columns: 3fr 2fr; gap: 28px; align-items: start; }
+.forum-boards, .forum-latest, .forum-posts { list-style: none; margin: 0; padding: 0; }
+.forum-board {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 6px solid var(--cat-color, var(--brand-blue));
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    transition: transform 0.18s ease-out;
+}
+.forum-board:hover { transform: translateX(4px); }
+.forum-board h3 { margin: 0 0 2px; font-size: 1.05rem; }
+.forum-board h3 a { color: var(--text); }
+.forum-board p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.forum-board-count { flex-shrink: 0; color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+.forum-board-count strong { color: var(--text); font-size: 1rem; }
+
+.forum-latest li { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.forum-latest li > div { flex: 1; min-width: 0; }
+.forum-latest-title { display: block; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.forum-latest-meta { display: flex; flex-direction: column; align-items: flex-end; color: var(--muted); font-size: 0.8rem; }
+.forum-latest-meta strong { color: var(--brand-orange); font-size: 0.95rem; }
+
+.forum-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); }
+.forum-tag::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--cat-color, var(--brand-blue)); }
+
+.forum-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.forum-avatars { display: inline-flex; }
+.forum-avatars .forum-avatar { width: 28px; height: 28px; font-size: 0.75rem; margin-left: -6px; border: 2px solid var(--bg); }
+.forum-avatars .forum-avatar:first-child { margin-left: 0; }
+
+.forum-topics { width: 100%; border-collapse: collapse; }
+.forum-topics th {
+    padding: 8px 10px;
+    border-bottom: 3px solid var(--border);
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+}
+.forum-topics td { padding: 14px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.forum-topics tbody tr:hover { background: #fff; }
+.forum-topics .forum-col-num { width: 96px; text-align: center; color: var(--muted); white-space: nowrap; }
+.forum-topics .forum-col-people { width: 130px; }
+.forum-topic-title { font-weight: 600; color: var(--text); }
+.forum-topic-excerpt { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; }
+.forum-pin { font-size: 0.85em; }
+
+.forum-topic-heading { margin: 0 0 8px; }
+.forum-topic-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 0 20px; color: var(--muted); font-size: 0.85rem; }
+.forum-topic-meta form, .forum-post-foot form { margin: 0; }
+/* Small text-style buttons: pin, delete */
+.forum-link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    color: var(--brand-blue);
+    cursor: pointer;
+}
+.forum-link-btn:hover { text-decoration: underline; }
+.forum-link-btn.forum-danger { color: #b3472f; }
+.forum-post { display: flex; gap: 14px; padding: 18px 0; border-top: 1px solid var(--border); }
+.forum-post-main { flex: 1; min-width: 0; }
+.forum-post-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 0 6px; }
+.forum-post-head time { margin-left: auto; color: var(--muted); font-size: 0.85rem; }
+.forum-post-body { margin: 0 0 8px; }
+.forum-post-foot { display: flex; align-items: center; gap: 16px; color: var(--muted); font-size: 0.85rem; }
+.forum-post:target { background: #fff; box-shadow: 0 0 0 10px #fff; border-radius: 6px; }
+.forum-like {
+    display: inline-block;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    color: var(--muted);
+}
+button.forum-like { cursor: pointer; transition: transform 0.15s ease-out, color 0.15s, border-color 0.15s; }
+button.forum-like:hover { color: var(--brand-orange); border-color: var(--brand-orange); transform: scale(1.06); }
+.forum-like.is-liked { color: var(--brand-orange); border-color: var(--brand-orange); background: #fdf3ec; font-weight: 700; }
+
+/* Ask-a-question and reply forms (same field look as the login card) */
+.forum-form { max-width: 720px; }
+.forum-form label { display: block; font-weight: 700; font-size: 0.9rem; margin: 0 0 6px; }
+.forum-form input[type="text"],
+.forum-form select,
+.forum-form textarea {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: #fbfaf7;
+    font: inherit;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.forum-form textarea { resize: vertical; }
+.forum-form input[type="text"]:focus,
+.forum-form select:focus,
+.forum-form textarea:focus {
+    outline: none;
+    border-color: var(--brand-blue);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(44, 74, 124, 0.12);
+}
+.forum-form-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.forum-reply { max-width: none; margin-top: 12px; padding-top: 18px; border-top: 3px solid var(--border); }
+.forum-login-note { color: var(--muted); }
+@media (max-width: 760px) {
+    .forum-home { grid-template-columns: 1fr; }
+    .forum-topics .forum-col-people, .forum-topics .forum-col-views { display: none; }
+    .forum-topics .forum-col-num { width: 62px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .forum-board, button.forum-like { transition: none; }
+    .forum-board:hover, button.forum-like:hover { transform: none; }
 }
 
 /* ---------- Disclaimer ---------- */
