@@ -1,0 +1,38 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2c4a7c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Leadership handoff: a baton passes from the outgoing CEO to the successor and the stock line calms</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.baton{animation:baton 6s ease-in-out infinite}
+.jag{opacity:0;animation:jag 6s ease-in-out infinite}
+.flat{animation:flat 6s ease-in-out infinite}
+.star{transform-box:fill-box;transform-origin:center;animation:tw 3s ease-in-out infinite alternate}
+@keyframes baton{0%{transform:translate(-240px,0);opacity:0}8%{opacity:1}22%{transform:translate(-170px,-50px) rotate(-25deg)}34%{transform:translate(-80px,-72px) rotate(0)}46%{transform:translate(0,0) rotate(0)}88%{transform:translate(0,0);opacity:1}96%{opacity:0}100%{transform:translate(-240px,0);opacity:0}}
+@keyframes jag{0%,10%{opacity:0}16%,46%{opacity:1}56%,100%{opacity:0}}
+@keyframes flat{0%,50%{opacity:0}62%,88%{opacity:1}100%{opacity:0}}
+@keyframes tw{from{transform:scale(.8)}to{transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<path d="M28 206h584"/>
+<!-- outgoing -->
+<circle cx="150" cy="98" r="20" fill="#ffffff"/>
+<path d="M120 206v-40q0-30 30-30t30 30v40z" fill="#ffffff"/>
+<path d="M178 160L200 152"/>
+<text x="150" y="240" font-size="26" fill="#d97a2e" text-anchor="middle">Outgoing</text>
+<!-- successor -->
+<circle cx="490" cy="98" r="20" fill="#ffffff"/>
+<path d="M460 206v-40q0-30 30-30t30 30v40z" fill="#ffffff"/>
+<path d="M462 160L440 152"/>
+<path class="star" d="M490 156l4 8 8 1-6 6 2 8-8-4-8 4 2-8-6-6 8-1z" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/>
+<text x="490" y="240" font-size="26" fill="#d97a2e" text-anchor="middle">Successor</text>
+<!-- stock line card -->
+<rect x="262" y="130" width="116" height="70" rx="14" fill="#ffffff"/>
+<path class="jag" d="M276 172l12-18 12 24 12-30 12 28 12-20 12 16 12-8" stroke="#c0392b" stroke-width="3"/>
+<path class="flat" d="M276 165h88" stroke="#2f8f5b" stroke-width="4"/>
+<!-- baton -->
+<g class="baton">
+<rect x="423" y="146" width="40" height="12" rx="6" fill="#fdebd3" stroke="#e8963f"/>
+<path d="M437 146v12" stroke="#e8963f" stroke-width="3"/>
+</g>
+</svg>
+

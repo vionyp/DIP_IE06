@@ -78,6 +78,7 @@ On Mac: `/Applications/XAMPP/htdocs/stocksense/`
 5. **Existing database only** (imported `sql/schema.sql` before login was added):
    select the `stocksense` database → **Import** → `sql/migrations/003_login_answers.sql`.
    This creates the `answers` table. Fresh imports of `sql/schema.sql` already have it.
+6. **Existing database only:** also import `sql/migrations/006_lesson_content.sql` (utf8mb4) to get the new lesson content and figures. Fresh imports already include it.
 
 ### Accounts and saved answers
 

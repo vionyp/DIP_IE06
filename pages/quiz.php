@@ -81,7 +81,7 @@ function render_result_block(array $r): void
     $hasComparison = quiz_has_comparison($item);
     ?>
     <div class="quiz-result <?= $r['is_correct'] ? 'result-correct' : 'result-incorrect' ?>">
-        <p class="question-text"><?= htmlspecialchars($item['question_text']) ?></p>
+        <p class="question-text"><?= nl2br(htmlspecialchars($item['question_text'])) ?></p>
         <p class="your-answer">
             Your answer: <strong><?= htmlspecialchars($options[$r['chosen']] ?? '(no answer)') ?></strong>
             — <?= $r['is_correct'] ? 'Correct!' : 'Not quite.' ?>
@@ -89,7 +89,7 @@ function render_result_block(array $r): void
         <?php if (!$r['is_correct']): ?>
         <p class="correct-answer">Most likely answer: <strong><?= htmlspecialchars($options[$item['correct_option']]) ?></strong></p>
         <?php endif; ?>
-        <p class="explanation"><?= htmlspecialchars($item['explanation']) ?></p>
+        <p class="explanation"><?= nl2br(htmlspecialchars($item['explanation'])) ?></p>
 
         <?php if ($hasComparison): ?>
         <div class="result-visuals">
@@ -157,7 +157,13 @@ $quiz_ids = array_values(array_filter(array_map('intval', explode(',', $qidsPara
 
 if (empty($quiz_ids)) {
     $stmt = $pdo->prepare(
-        'SELECT id FROM quiz_items WHERE category = :cat ORDER BY RAND() LIMIT ' . QUESTIONS_PER_ATTEMPT
+        "SELECT qi.id
+         FROM quiz_items qi
+         JOIN news_articles na ON na.id = qi.news_article_id
+         WHERE qi.category = :cat
+           AND qi.question_type = 'real_news'
+           AND na.source <> 'manual_simulated'
+         ORDER BY RAND() LIMIT " . QUESTIONS_PER_ATTEMPT
     );
     $stmt->execute(['cat' => $category]);
     $quiz_ids = array_column($stmt->fetchAll(), 'id');
@@ -334,8 +340,9 @@ require __DIR__ . '/../includes/header.php';
         <img src="../assets/img/<?= htmlspecialchars($cat['icon']) ?>" alt="" class="trail-icon">
         <div>
             <h1><?= htmlspecialchars($cat['label']) ?> quiz</h1>
-            <p>Read each question, then pick the direction you think it went. Questions are drawn
-               at random, so retaking this quiz may show a different set.</p>
+            <p>These are <?= QUESTIONS_PER_ATTEMPT ?> questions randomly pulled from our question bank.
+               Every one is based on <strong>real historical news</strong>: read the headline, then pick how you
+               think the stock moved the next day. Retake the quiz for a fresh set.</p>
         </div>
     </div>
 
@@ -361,7 +368,7 @@ require __DIR__ . '/../includes/header.php';
 
             <fieldset class="quiz-question">
                 <legend>Question <?= $idx + 1 ?> <span class="q-type"><?= $item['question_type'] === 'real_news' ? 'Real news' : 'Concept' ?></span></legend>
-                <p class="question-text"><?= htmlspecialchars($item['question_text']) ?></p>
+                <p class="question-text"><?= nl2br(htmlspecialchars($item['question_text'])) ?></p>
 
                 <label class="quiz-option">
                     <input type="radio" name="answer" value="a" required>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2c4a7c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Export ban: a chip crate is stopped at a ban gate and sales drop</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.crate{animation:crate 6s ease-in-out infinite}
+.stamp{transform-box:fill-box;transform-origin:center;animation:stamp 6s ease-out infinite}
+.drop{transform-box:fill-box;transform-origin:50% 100%;animation:drop 6s ease-in-out infinite}
+.down{animation:down 6s ease-in-out infinite}
+.sign{transform-box:fill-box;transform-origin:50% 100%;animation:sway 3s ease-in-out infinite alternate}
+@keyframes crate{0%{transform:translateX(-150px);opacity:0}10%{opacity:1}44%{transform:translateX(0)}48%{transform:translateX(-8px)}52%{transform:translateX(0)}88%{transform:translateX(0);opacity:1}96%{transform:translateX(0);opacity:0}100%{transform:translateX(-150px);opacity:0}}
+@keyframes stamp{0%,48%{transform:scale(1.8);opacity:0}58%{transform:scale(1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes drop{0%,52%{transform:scaleY(2.57)}68%,88%{transform:scaleY(1)}100%{transform:scaleY(2.57)}}
+@keyframes down{0%,54%{transform:translateY(-12px);opacity:0}68%,88%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:0}}
+@keyframes sway{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<defs><clipPath id="g1bar"><rect x="286" y="96" width="26" height="110" rx="6"/></clipPath></defs>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<!-- conveyor -->
+<rect x="40" y="206" width="250" height="18" rx="9" fill="#ffffff"/>
+<path d="M66 215h2M116 215h2M166 215h2M216 215h2M266 215h2" stroke-width="5"/>
+<!-- gate -->
+<g clip-path="url(#g1bar)" stroke="#e8963f" stroke-width="6">
+<rect x="286" y="96" width="26" height="110" fill="#ffffff" stroke="none"/>
+<path d="M280 120l40-22M280 148l40-22M280 176l40-22M280 204l40-22"/>
+</g>
+<rect x="286" y="96" width="26" height="110" rx="6"/>
+<path d="M272 206h54"/>
+<g class="sign">
+<path d="M299 96V82"/>
+<circle cx="299" cy="58" r="24" fill="#ffffff" stroke="#c0392b" stroke-width="5"/>
+<path d="M282 41l34 34" stroke="#c0392b" stroke-width="5"/>
+</g>
+<!-- crate with chip -->
+<g class="crate">
+<rect x="196" y="128" width="78" height="78" rx="9" fill="#ffffff"/>
+<path d="M196 146h78" stroke-width="3"/>
+<g stroke="#e8963f" stroke-width="3">
+<rect x="217" y="157" width="36" height="36" rx="5" fill="#fdebd3"/>
+<rect x="227" y="167" width="16" height="16" rx="2"/>
+<path d="M211 165h6M211 175h6M211 185h6M253 165h6M253 175h6M253 185h6"/>
+</g>
+<g transform="rotate(-12 235 174)"><g class="stamp">
+<rect x="173" y="154" width="124" height="42" rx="7" fill="#ffffff" stroke="#c0392b" stroke-width="3.5"/>
+<text x="235" y="184" font-size="25" fill="#c0392b" text-anchor="middle" letter-spacing="1">BANNED</text>
+</g></g>
+</g>
+<!-- sales chart -->
+<rect x="378" y="34" width="228" height="190" rx="16" fill="#ffffff"/>
+<text x="398" y="70" font-size="26" fill="#2c4a7c">China sales</text>
+<path d="M398 200h188"/>
+<rect x="410" y="128" width="36" height="72" rx="5" fill="#e8eef7"/>
+<rect x="460" y="104" width="36" height="96" rx="5" fill="#e8eef7"/>
+<rect x="510" y="92" width="36" height="108" rx="5" stroke="#c9c2b3" stroke-width="3" stroke-dasharray="6 8"/>
+<rect class="drop" x="510" y="158" width="36" height="42" rx="5" fill="#f8dcd8" stroke="#c0392b"/>
+<g class="down" stroke="#c0392b" stroke-width="4">
+<path d="M570 96v56M559 140l11 13 11-13"/>
+</g>
+</svg>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2f8f5b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>A pulse travels from earnings results through outlook and forecasts to the stock price</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.pulse{opacity:0;animation:run 6s ease-in-out infinite}
+.pop{transform-box:fill-box;transform-origin:center;animation:pop 6s ease-out infinite}
+.go{animation:march 2s linear infinite}
+@keyframes run{0%{transform:translateX(0);opacity:0}6%{opacity:1}72%{transform:translateX(450px);opacity:1}78%,100%{transform:translateX(450px);opacity:0}}
+@keyframes pop{0%,70%{transform:scale(1)}78%{transform:scale(1.14)}90%,100%{transform:scale(1)}}
+@keyframes march{to{stroke-dashoffset:-28}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<!-- links -->
+<g class="go" stroke="#e8963f" stroke-width="4" stroke-dasharray="2 12">
+<path d="M146 116h58M296 116h58M446 116h58"/>
+</g>
+<g stroke="#e8963f" stroke-width="4">
+<path d="M196 106l10 10-10 10M346 106l10 10-10 10M496 106l10 10-10 10"/>
+</g>
+<!-- nodes -->
+<g fill="#ffffff">
+<circle cx="100" cy="116" r="44"/>
+<circle cx="250" cy="116" r="44"/>
+<circle cx="400" cy="116" r="44"/>
+</g>
+<circle class="pop" cx="550" cy="116" r="44" fill="#e3f1e8"/>
+<!-- results: document with bars -->
+<rect x="84" y="94" width="32" height="44" rx="5" fill="#e8eef7"/>
+<path d="M91 108h18M91 118h18M91 128h10" stroke-width="3"/>
+<!-- outlook: speech bubble -->
+<path d="M230 98h40a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6h-22l-10 10v-10h-8a6 6 0 0 1-6-6v-20a6 6 0 0 1 6-6z" fill="#e8eef7"/>
+<path d="M238 118h24M238 108h14" stroke-width="3"/>
+<!-- forecast: rising line -->
+<path d="M376 134l14-14 10 8 22-26" stroke="#e8963f" stroke-width="4"/>
+<path d="M410 102h12v12" stroke="#e8963f" stroke-width="4"/>
+<!-- price: up arrow -->
+<path d="M550 138V96M534 110l16-16 16 16" stroke="#2f8f5b" stroke-width="5"/>
+<!-- labels -->
+<g font-size="24" fill="#2f8f5b" text-anchor="middle">
+<text x="100" y="236">Results</text>
+<text x="250" y="236">Outlook</text>
+<text x="400" y="236">Forecast</text>
+<text x="550" y="236">Price</text>
+</g>
+<!-- pulse -->
+<circle class="pulse" cx="100" cy="116" r="10" fill="#e8963f" stroke="none"/>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#7a4fbf" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Soft landing: a plane glides smoothly onto the runway and a data center lights up</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.plane{transform-box:fill-box;transform-origin:center;animation:land 6s ease-in-out infinite}
+.lit{animation:lit 6s ease-in-out infinite}
+.l2{animation-delay:.3s}.l3{animation-delay:.6s}
+.glide{animation:march 2s linear infinite}
+.cloud{animation:bob 3s ease-in-out infinite alternate}
+@keyframes land{0%{transform:translate(-170px,-120px) rotate(8deg);opacity:0}10%{opacity:1}46%{transform:translate(0,0) rotate(0)}88%{transform:translate(0,0);opacity:1}96%,100%{transform:translate(0,0);opacity:0}}
+@keyframes lit{0%,48%{opacity:0}58%,88%{opacity:1}100%{opacity:0}}
+@keyframes march{to{stroke-dashoffset:-28}}
+@keyframes bob{from{transform:translateY(-3px)}to{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<rect x="40" y="206" width="290" height="12" rx="6" fill="#ffffff"/>
+<path d="M76 212h2M126 212h2M176 212h2M226 212h2M276 212h2" stroke-width="5"/>
+<path class="glide" d="M64 70Q170 86 220 150" stroke-width="4" stroke-dasharray="2 12"/>
+<g class="plane">
+<path d="M222 160l-14-26h20l12 26z" fill="#e8eef7"/>
+<rect x="216" y="158" width="100" height="30" rx="15" fill="#ffffff"/>
+<path d="M262 184l-14 14h24l22-14z" fill="#e8eef7"/>
+<path d="M290 168h10M262 171h2M274 171h2M286 171h2" stroke-width="4"/>
+<path d="M240 188v8M298 188v8" stroke-width="3"/>
+<circle cx="240" cy="200" r="5" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/><circle cx="298" cy="200" r="5" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/>
+</g>
+<text x="185" y="246" font-size="26" fill="#7a4fbf" text-anchor="middle">Soft landing</text>
+<path class="glide" d="M342 150h46" stroke-width="4" stroke-dasharray="2 12"/>
+<path d="M388 138l12 12-12 12" stroke-width="4"/>
+<path class="cloud" d="M486 80a14 14 0 0 1 0-28 20 20 0 0 1 38-6 16 16 0 0 1 14 34z" fill="#ffffff"/>
+<rect x="440" y="96" width="140" height="110" rx="10" fill="#ffffff"/>
+<g stroke-width="3">
+<rect x="456" y="110" width="108" height="26" rx="5" fill="#e8eef7"/><rect x="456" y="142" width="108" height="26" rx="5" fill="#e8eef7"/><rect x="456" y="174" width="108" height="26" rx="5" fill="#e8eef7"/>
+<g stroke="#e8963f" fill="#fdebd3"><rect class="lit" x="456" y="110" width="108" height="26" rx="5"/><rect class="lit l2" x="456" y="142" width="108" height="26" rx="5"/><rect class="lit l3" x="456" y="174" width="108" height="26" rx="5"/></g>
+<path d="M470 123h2M478 123h2M470 155h2M478 155h2M470 187h2M478 187h2" stroke-width="5"/>
+</g>
+<text x="510" y="242" font-size="26" fill="#7a4fbf" text-anchor="middle">Data center</text>
+</svg>

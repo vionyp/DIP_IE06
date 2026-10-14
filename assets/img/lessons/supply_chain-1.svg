@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#1f9a94" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Industry structure: a chip moves from design to fab to packaging to test</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.chip{animation:go 6s ease-in-out infinite}
+.tick{transform-box:fill-box;transform-origin:center;animation:pop 6s ease-out infinite}
+.belt{animation:march 2s linear infinite}
+.pen{transform-box:fill-box;transform-origin:50% 100%;animation:sway 2.4s ease-in-out infinite alternate}
+@keyframes go{0%{transform:translateX(-470px);opacity:0}6%{opacity:1}78%{transform:translateX(0)}92%{transform:translateX(0);opacity:1}98%{transform:translateX(0);opacity:0}100%{transform:translateX(-470px);opacity:0}}
+@keyframes pop{0%,76%{transform:scale(0);opacity:0}84%{transform:scale(1.2);opacity:1}90%,92%{transform:scale(1);opacity:1}98%,100%{transform:scale(1);opacity:0}}
+@keyframes march{to{stroke-dashoffset:-28}}
+@keyframes sway{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<!-- belt -->
+<rect x="40" y="198" width="560" height="16" rx="8" fill="#ffffff"/>
+<path class="belt" d="M60 206H580" stroke-width="5" stroke-dasharray="2 26"/>
+<!-- design -->
+<rect x="68" y="98" width="64" height="70" rx="8" fill="#ffffff"/>
+<path d="M80 114h30M80 128h24M80 142h14" stroke-width="3"/>
+<g transform="rotate(40 126 136)"><g class="pen"><rect x="120" y="108" width="12" height="38" rx="2" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/><path d="M120 146l6 12 6-12" fill="#ffffff" stroke-width="3"/></g></g>
+<!-- fab -->
+<path d="M214 168V120l24-18v18l24-18v18l24-18v66z" fill="#e0f2f1"/>
+<rect x="236" y="138" width="28" height="22" rx="3" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/>
+<!-- packaging -->
+<rect x="355" y="116" width="70" height="52" rx="6" fill="#ffffff"/>
+<path d="M355 134h70M390 116v18" stroke-width="3"/>
+<!-- test -->
+<rect x="500" y="98" width="70" height="70" rx="10" fill="#ffffff"/>
+<g class="tick"><circle cx="535" cy="132" r="22" fill="#e3f1e8" stroke="#2f8f5b"/><path d="M524 132l8 9 14-17" stroke="#2f8f5b" stroke-width="4.5"/></g>
+<!-- chip -->
+<g class="chip"><rect x="523" y="172" width="24" height="24" rx="4" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/><rect x="530" y="179" width="10" height="10" rx="2" stroke="#e8963f" stroke-width="2.5"/><path d="M518 178h5M518 190h5M547 178h5M547 190h5" stroke="#e8963f" stroke-width="3"/></g>
+<text x="100" y="240" font-size="26" fill="#1f9a94" text-anchor="middle">Design</text>
+<text x="250" y="240" font-size="26" fill="#1f9a94" text-anchor="middle">Fab</text>
+<text x="390" y="240" font-size="26" fill="#1f9a94" text-anchor="middle">Packaging</text>
+<text x="535" y="240" font-size="26" fill="#1f9a94" text-anchor="middle">Test</text>
+</svg>

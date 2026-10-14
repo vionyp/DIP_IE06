@@ -8,7 +8,8 @@
  * (recommended — see sql/schema.sql comments / README).
  */
 
-define('DB_HOST', '127.0.0.1');
+// Port 3307: this laptop's XAMPP MySQL, since a separate MySQL80 service already uses 3306.
+define('DB_HOST', '127.0.0.1;port=3307');
 define('DB_NAME', 'stocksense');
 define('DB_USER', 'root');
 define('DB_PASS', '');

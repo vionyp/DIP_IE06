@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2c4a7c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Subsidies: coins flow from a government building into a new chip factory</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.coin{transform-box:fill-box;transform-origin:center;animation:fly 3.6s ease-in-out infinite}
+.c2{animation-delay:-1.2s}
+.c3{animation-delay:-2.4s}
+.up{animation:bob 2.4s ease-in-out infinite alternate}
+.spark{transform-box:fill-box;transform-origin:center;animation:twinkle 3s ease-in-out infinite}
+.flag{transform-box:fill-box;transform-origin:0 50%;animation:wave 2.4s ease-in-out infinite alternate}
+@keyframes fly{0%{transform:translate(-108px,52px) scale(.6);opacity:0}12%{opacity:1}25%{transform:translate(-55px,13px) scale(1)}50%{transform:translate(0,0) scale(1)}75%{transform:translate(55px,13px) scale(1)}88%{opacity:1}100%{transform:translate(108px,52px) scale(.6);opacity:0}}
+@keyframes bob{from{transform:translateY(4px)}to{transform:translateY(-6px)}}
+@keyframes twinkle{0%,100%{transform:scale(.6);opacity:.4}50%{transform:scale(1.1);opacity:1}}
+@keyframes wave{from{transform:skewY(-6deg)}to{transform:skewY(6deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.c2{transform:translate(-55px,13px)}.c3{transform:translate(55px,13px)}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<path d="M28 206h584"/>
+<!-- government building -->
+<path d="M120 54V28"/>
+<path class="flag" d="M120 28h24l-6 7 6 7h-24z" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/>
+<path d="M36 100l84-46 84 46z" fill="#ffffff"/>
+<rect x="48" y="100" width="144" height="14" rx="3" fill="#e8eef7"/>
+<rect x="60" y="114" width="16" height="64" rx="3" fill="#ffffff"/>
+<rect x="92" y="114" width="16" height="64" rx="3" fill="#ffffff"/>
+<rect x="132" y="114" width="16" height="64" rx="3" fill="#ffffff"/>
+<rect x="164" y="114" width="16" height="64" rx="3" fill="#ffffff"/>
+<rect x="42" y="178" width="156" height="14" rx="3" fill="#ffffff"/>
+<rect x="34" y="192" width="172" height="14" rx="3" fill="#ffffff"/>
+<text x="120" y="238" font-size="26" fill="#2c4a7c" text-anchor="middle">Grants</text>
+<!-- coin trail -->
+<path d="M214 104Q320 0 430 104" stroke="#e8963f" stroke-width="3" stroke-dasharray="2 12" opacity=".7"/>
+<!-- coins -->
+<g class="coin c1"><circle cx="322" cy="52" r="17" fill="#fdebd3" stroke="#e8963f"/><text x="322" y="59" font-size="20" fill="#c97a26" text-anchor="middle">$</text></g>
+<g class="coin c2"><circle cx="322" cy="52" r="17" fill="#fdebd3" stroke="#e8963f"/><text x="322" y="59" font-size="20" fill="#c97a26" text-anchor="middle">$</text></g>
+<g class="coin c3"><circle cx="322" cy="52" r="17" fill="#fdebd3" stroke="#e8963f"/><text x="322" y="59" font-size="20" fill="#c97a26" text-anchor="middle">$</text></g>
+<!-- fab -->
+<path d="M410 206V112l32-26v26l32-26v26l32-26v26l32-26v26l18 0v94" fill="#ffffff"/>
+<rect x="472" y="134" width="44" height="44" rx="6" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/>
+<rect x="484" y="146" width="20" height="20" rx="3" stroke="#e8963f" stroke-width="3"/>
+<path d="M466 144h6M466 156h6M466 168h6M516 144h6M516 156h6M516 168h6" stroke="#e8963f" stroke-width="3"/>
+<rect x="424" y="166" width="26" height="40" rx="4" fill="#e8eef7"/>
+<rect x="540" y="134" width="22" height="22" rx="4" fill="#e8eef7"/>
+<text x="492" y="238" font-size="26" fill="#2c4a7c" text-anchor="middle">New fab</text>
+<!-- stock up arrow -->
+<g class="up" stroke="#e8963f" stroke-width="4">
+<path d="M566 66l12-12 10 8 18-20"/><path d="M594 42h12v12"/>
+</g>
+<g class="spark" stroke="#e8963f" stroke-width="3"><path d="M386 132v16M378 140h16"/></g>
+</svg>

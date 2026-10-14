@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2f8f5b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>A CEO speech bubble shows a rising forecast line and the stock climbs</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.line{stroke-dasharray:1;animation:draw 6s ease-in-out infinite}
+.dot{transform-box:fill-box;transform-origin:center;animation:dot 6s ease-in-out infinite}
+.say{transform-box:fill-box;transform-origin:20% 100%;animation:say 3s ease-in-out infinite alternate}
+.go{animation:march 2s linear infinite}
+.badge{transform-box:fill-box;transform-origin:center;animation:pop 6s ease-out infinite}
+@keyframes draw{0%,8%{stroke-dashoffset:1}50%,88%{stroke-dashoffset:0}100%{stroke-dashoffset:1}}
+@keyframes dot{0%,46%{transform:scale(0)}56%{transform:scale(1.3)}64%,88%{transform:scale(1)}100%{transform:scale(0)}}
+@keyframes say{from{transform:rotate(-1.5deg)}to{transform:rotate(1.5deg)}}
+@keyframes pop{0%,56%{transform:scale(1)}66%{transform:scale(1.1)}78%,100%{transform:scale(1)}}
+@keyframes march{to{stroke-dashoffset:-28}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<!-- CEO -->
+<g transform="translate(0 -18)">
+<circle cx="86" cy="152" r="22" fill="#ffffff"/>
+<path d="M48 224q0-44 38-44t38 44z" fill="#e8eef7"/>
+<path d="M86 186l-7 12 7 8 7-8z" fill="#ffffff" stroke-width="3"/>
+</g>
+<text x="86" y="238" font-size="26" fill="#2f8f5b" text-anchor="middle">CEO</text>
+<!-- speech bubble with forecast -->
+<g class="say">
+<path d="M164 34h270a14 14 0 0 1 14 14v124a14 14 0 0 1-14 14H210l-44 24 10-24h-12a14 14 0 0 1-14-14V48a14 14 0 0 1 14-14z" fill="#ffffff"/>
+<text x="180" y="68" font-size="22" fill="#2f8f5b">Guidance</text>
+<path d="M326 156H210" stroke="#c9c2b3" stroke-width="3"/>
+<path d="M214 150L338 138" stroke="#c9c2b3" stroke-width="3" stroke-dasharray="6 8"/>
+<path class="line" pathLength="1" d="M214 152L270 130L316 134L368 92L420 60" stroke="#e8963f" stroke-width="5"/>
+<circle class="dot" cx="420" cy="60" r="8" fill="#e8963f" stroke="none"/>
+</g>
+<!-- link -->
+<path class="go" d="M460 110h34" stroke="#e8963f" stroke-width="4" stroke-dasharray="2 12"/>
+<!-- stock badge -->
+<circle class="badge" cx="548" cy="112" r="50" fill="#e3f1e8"/>
+<path d="M526 134l16-16 12 10 22-26M562 102h14v14" stroke="#2f8f5b" stroke-width="5"/>
+<text x="548" y="238" font-size="26" fill="#2f8f5b" text-anchor="middle">Stock</text>
+</svg>

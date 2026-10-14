@@ -1,0 +1,49 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2c4a7c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>CapEx and joint venture: coins flow in, a crane builds a new fab and two partner flags cross</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.coin{transform-box:fill-box;transform-origin:center;animation:coin 3s ease-in-out infinite}
+.c2{animation-delay:-1s}.c3{animation-delay:-2s}
+.fab{transform-box:fill-box;transform-origin:50% 100%;animation:rise 6s ease-in-out infinite}
+.hook{animation:bob 3s ease-in-out infinite alternate}
+.fa{transform-box:fill-box;transform-origin:50% 100%;animation:sway 2.6s ease-in-out infinite alternate}
+.fb{transform-box:fill-box;transform-origin:50% 100%;animation:sway 3.2s ease-in-out infinite alternate-reverse}
+@keyframes coin{0%{transform:translateX(-60px);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(50px);opacity:0}}
+@keyframes rise{0%{transform:scaleY(.55)}50%,88%{transform:scaleY(1)}100%{transform:scaleY(.55)}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(8px)}}
+@keyframes sway{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.c2{transform:translate(-34px,0)}.c3{transform:translate(34px,0)}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<path d="M28 206h584"/>
+<!-- coins -->
+<g stroke="#e8963f" stroke-width="3" fill="#fdebd3">
+<g class="coin"><circle cx="100" cy="176" r="13"/><path d="M95 176h10"/></g>
+<g class="coin c2"><circle cx="100" cy="176" r="13"/><path d="M95 176h10"/></g>
+<g class="coin c3"><circle cx="100" cy="176" r="13"/><path d="M95 176h10"/></g>
+</g>
+<text x="100" y="240" font-size="26" fill="#d97a2e" text-anchor="middle">CapEx</text>
+<!-- fab -->
+<g class="fab">
+<path d="M180 206V122l32-24v24l32-24v24l32-24v24l32-24v24h14v84z" fill="#ffffff"/>
+<g stroke="#e8963f" stroke-width="3">
+<rect x="233" y="150" width="36" height="36" rx="5" fill="#fdebd3"/>
+<rect x="243" y="160" width="16" height="16" rx="2"/>
+<path d="M227 158h6M227 168h6M227 178h6M269 158h6M269 168h6M269 178h6"/>
+</g>
+</g>
+<text x="251" y="240" font-size="26" fill="#d97a2e" text-anchor="middle">New fab</text>
+<!-- crane -->
+<path d="M392 206V48M376 206h32M352 48h124"/>
+<rect x="378" y="58" width="28" height="22" rx="4" fill="#ffffff" stroke-width="3"/>
+<rect x="458" y="48" width="22" height="16" rx="3" fill="#e8eef7" stroke-width="3"/>
+<g class="hook">
+<path d="M290 48v22" stroke-width="3"/>
+<rect x="270" y="70" width="40" height="10" rx="4" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/>
+</g>
+<!-- JV flags -->
+<g class="fa"><path d="M508 206L556 106"/><path d="M556 106l28 8-28 12z" fill="#e8eef7" stroke-width="3"/></g>
+<g class="fb"><path d="M572 206L524 106" stroke="#e8963f"/><path d="M524 106l-28 8 28 12z" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/></g>
+<text x="540" y="240" font-size="26" fill="#d97a2e" text-anchor="middle">JV</text>
+</svg>
+

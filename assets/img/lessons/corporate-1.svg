@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2c4a7c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Spinoff: a company splits off a unit that floats away, grows and rises in value</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.unit{transform-box:fill-box;transform-origin:50% 100%;animation:unit 6s ease-in-out infinite}
+.trail{animation:march 2s linear infinite}
+.up{animation:up 6s ease-in-out infinite}
+.win{animation:glow 3s ease-in-out infinite alternate}
+.w2{animation-delay:-1s}
+@keyframes unit{0%{transform:translateX(-317px) scale(.4);opacity:0}8%{opacity:1}44%{transform:translateX(0) scale(1.06)}52%{transform:translateX(0) scale(1)}88%{transform:translateX(0) scale(1);opacity:1}96%{opacity:0}100%{transform:translateX(-317px) scale(.4);opacity:0}}
+@keyframes march{to{stroke-dashoffset:-28}}
+@keyframes up{0%,52%{transform:translateY(14px);opacity:0}66%,88%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:0}}
+@keyframes glow{from{opacity:.4}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<path d="M28 206h584"/>
+<!-- parent -->
+<rect x="66" y="96" width="134" height="110" rx="8" fill="#ffffff"/>
+<rect x="156" y="112" width="34" height="94" rx="4" stroke="#c9c2b3" stroke-width="3" stroke-dasharray="6 8"/>
+<rect x="86" y="118" width="24" height="20" rx="3" fill="#e8eef7" stroke-width="3"/>
+<rect x="122" y="118" width="24" height="20" rx="3" fill="#e8eef7" stroke-width="3"/>
+<rect class="win" x="86" y="152" width="24" height="20" rx="3" fill="#e8eef7" stroke-width="3"/>
+<rect class="win w2" x="122" y="152" width="24" height="20" rx="3" fill="#e8eef7" stroke-width="3"/>
+<text x="133" y="240" font-size="26" fill="#d97a2e" text-anchor="middle">Parent</text>
+<!-- trail -->
+<path class="trail" d="M206 100Q320 28 430 98" stroke-width="4" stroke-dasharray="2 12"/>
+<path d="M418 92l12 6-4 14" stroke-width="4"/>
+<!-- spinoff -->
+<g class="unit">
+<rect x="440" y="120" width="100" height="86" rx="8" fill="#fdebd3" stroke="#e8963f"/>
+<g stroke="#e8963f" stroke-width="3">
+<rect x="472" y="142" width="36" height="36" rx="5" fill="#ffffff"/>
+<rect x="482" y="152" width="16" height="16" rx="2"/>
+<path d="M466 150h6M466 160h6M466 170h6M508 150h6M508 160h6M508 170h6"/>
+</g>
+</g>
+<text x="490" y="240" font-size="26" fill="#d97a2e" text-anchor="middle">Spinoff</text>
+<!-- value up -->
+<g class="up" stroke="#e8963f" stroke-width="4.5">
+<path d="M562 196l16-22 12 10 20-36M594 148h16v16"/>
+</g>
+</svg>

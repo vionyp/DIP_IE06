@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2c4a7c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Trade war: a cart of gallium and germanium is blocked by a tariff wall while chip costs rise</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.cart{animation:cart 6s ease-in-out infinite}
+.tag{transform-box:fill-box;transform-origin:50% 0;animation:swing 3s ease-in-out infinite alternate}
+.rise{animation:rise 3s ease-in-out infinite}
+.dust{transform-box:fill-box;transform-origin:center;animation:dust 6s ease-out infinite}
+@keyframes cart{0%,4%{transform:translateX(-120px);opacity:0}14%{opacity:1}44%{transform:translateX(0)}48%{transform:translateX(-12px)}53%{transform:translateX(0)}57%{transform:translateX(-4px)}60%,88%{transform:translateX(0);opacity:1}96%{transform:translateX(0);opacity:0}100%{transform:translateX(-120px);opacity:0}}
+@keyframes swing{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
+@keyframes rise{0%{transform:translateY(10px);opacity:0}30%,75%{opacity:1}100%{transform:translateY(-14px);opacity:0}}
+@keyframes dust{0%,44%{transform:scale(.4);opacity:0}52%{transform:scale(1);opacity:1}70%,100%{transform:scale(1.3);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<path d="M28 214h584"/>
+<!-- mine -->
+<path d="M24 214l34-70 18 20 20-38 34 88" fill="#ffffff"/>
+<path d="M54 190l10-8 8 8-8 8z" fill="#e8eef7" stroke-width="3"/>
+<path d="M86 172l8-7 8 7-8 7z" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/>
+<!-- cart with minerals -->
+<g class="cart">
+<path d="M200 98l-6 24 22 18 22-18-6-24z" fill="#e8eef7"/>
+<text x="216" y="128" font-size="22" fill="#2c4a7c" text-anchor="middle">Ga</text>
+<path d="M248 98l-6 24 22 18 22-18-6-24z" fill="#fdebd3" stroke="#e8963f"/>
+<text x="264" y="128" font-size="22" fill="#c97a26" text-anchor="middle">Ge</text>
+<path d="M188 146h108l-10 48h-88z" fill="#ffffff"/>
+<path d="M200 166h84" stroke-width="3"/>
+<circle cx="218" cy="204" r="9" fill="#ffffff"/>
+<circle cx="266" cy="204" r="9" fill="#ffffff"/>
+</g>
+<g class="dust" stroke="#e8963f" stroke-width="3"><path d="M292 140l-8-8M294 160h-10M292 180l-8 8"/></g>
+<!-- tariff wall -->
+<rect x="300" y="104" width="60" height="110" rx="4" fill="#fdebd3"/>
+<path d="M300 126h60M300 148h60M300 170h60M300 192h60M330 104v22M315 126v22M345 126v22M330 148v22M315 170v22M345 170v22M330 192v22" stroke-width="3"/>
+<path d="M300 90v14M360 90v14"/>
+<rect x="256" y="48" width="148" height="44" rx="10" fill="#ffffff" stroke="#e8963f"/>
+<text x="330" y="80" font-size="26" fill="#2c4a7c" text-anchor="middle" letter-spacing="1">TARIFF</text>
+<!-- fab with price tag -->
+<path d="M420 214V122l30-24v24l30-24v24l30-24v24l30-24v24l14 0v92" fill="#ffffff"/>
+<rect x="470" y="140" width="40" height="40" rx="6" fill="#e8eef7"/>
+<rect x="481" y="151" width="18" height="18" rx="3"/>
+<rect x="436" y="174" width="22" height="40" rx="4" fill="#e8eef7"/>
+<g class="tag">
+<path d="M574 98v20"/>
+<path d="M558 118h32l6 10v34a6 6 0 0 1-6 6h-32a6 6 0 0 1-6-6v-34z" fill="#ffffff" stroke="#e8963f"/>
+<circle cx="574" cy="128" r="3" fill="#e8963f" stroke="none"/>
+<text x="574" y="158" font-size="20" fill="#c97a26" text-anchor="middle">$$</text>
+</g>
+<g class="rise" stroke="#c0392b" stroke-width="4"><path d="M612 92V48M601 59l11-13 11 13"/></g>
+</svg>

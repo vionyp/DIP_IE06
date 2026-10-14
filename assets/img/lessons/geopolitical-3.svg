@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2c4a7c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Location risk: tension ripples around a fab on Taiwan while a backup fab lights up elsewhere</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.rip{transform-box:fill-box;transform-origin:center;animation:rip 4s ease-out infinite}
+.r2{animation-delay:-2s}
+.route{animation:march 2s linear infinite}
+.win{opacity:.9;animation:glow 4s ease-in-out infinite}
+.w2{animation-delay:.4s}.w3{animation-delay:.8s}
+.warn{transform-box:fill-box;transform-origin:50% 100%;animation:tilt 2s ease-in-out infinite alternate}
+.wave{animation:drift 4s ease-in-out infinite alternate}
+@keyframes rip{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+@keyframes march{to{stroke-dashoffset:-28}}
+@keyframes glow{0%,15%{opacity:0}45%,85%{opacity:.9}100%{opacity:0}}
+@keyframes tilt{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+@keyframes drift{from{transform:translateX(-8px)}to{transform:translateX(8px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.rip{opacity:.5}.r2{opacity:.25;transform:scale(1.15)}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<!-- sea waves -->
+<g class="wave" stroke="#9fb3d1" stroke-width="3">
+<path d="M34 212q10-8 20 0t20 0M262 196q10-8 20 0t20 0M44 92q10-8 20 0t20 0"/>
+</g>
+<!-- tension ripples -->
+<ellipse class="rip" cx="189" cy="129" rx="70" ry="84" stroke="#e8963f" stroke-width="3" stroke-dasharray="10 10"/>
+<ellipse class="rip r2" cx="189" cy="129" rx="70" ry="84" stroke="#e8963f" stroke-width="3" stroke-dasharray="10 10"/>
+<!-- island -->
+<path d="M206 48c18 4 28 20 26 40-2 32-16 64-36 92-8 12-18 22-28 30-8-14-18-34-22-58-6-28 0-58 20-82 12-14 26-24 40-22z" fill="#ffffff"/>
+<g transform="translate(14 -12)"><path d="M150 150v-24l12-12v12l12-12v12l12-12v12l8 0v24z" fill="#e8eef7"/>
+<rect x="164" y="132" width="16" height="16" rx="3" fill="#fdebd3" stroke="#e8963f" stroke-width="3"/></g>
+<text x="186" y="242" font-size="26" fill="#2c4a7c" text-anchor="middle">Taiwan</text>
+<!-- warning -->
+<g class="warn">
+<path d="M84 34l22 38H62z" fill="#fdebd3" stroke="#e8963f"/>
+<path d="M84 48v10M84 65v1" stroke="#c97a26" stroke-width="4"/>
+</g>
+<!-- route to backup -->
+<path class="route" d="M236 96Q344 18 452 112" stroke-width="4" stroke-dasharray="2 12"/>
+<path d="M438 112l14 0 2-14" stroke-width="4"/>
+<!-- backup site -->
+<path d="M410 206c20-16 50-22 84-22h46c32 0 58 6 80 22z" fill="#ffffff" stroke-width="3"/>
+<path d="M466 196v-62l26-22v22l26-22v22l26-22v22l18 0v62z" fill="#ffffff"/>
+<rect x="478" y="146" width="20" height="18" rx="3" fill="#ffffff"/>
+<rect x="510" y="146" width="20" height="18" rx="3" fill="#ffffff"/>
+<rect x="542" y="146" width="20" height="18" rx="3" fill="#ffffff"/>
+<rect class="win" x="478" y="146" width="20" height="18" rx="3" fill="#e8963f" stroke="none"/>
+<rect class="win w2" x="510" y="146" width="20" height="18" rx="3" fill="#e8963f" stroke="none"/>
+<rect class="win w3" x="542" y="146" width="20" height="18" rx="3" fill="#e8963f" stroke="none"/>
+<rect x="502" y="174" width="20" height="22" rx="3" fill="#e8eef7"/>
+<path d="M584 70l16 6v12c0 10-7 17-16 20-9-3-16-10-16-20V76z" fill="#e3f1e8" stroke="#2f8f5b" stroke-width="3"/>
+<path d="M577 88l5 5 9-10" stroke="#2f8f5b" stroke-width="3"/>
+<text x="524" y="238" font-size="26" fill="#2c4a7c" text-anchor="middle">Backup fab</text>
+</svg>

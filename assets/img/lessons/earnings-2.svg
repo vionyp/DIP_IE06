@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2f8f5b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Actual result beats the dashed expectation bar and the stock arrow rises</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.act{transform-box:fill-box;transform-origin:50% 100%;animation:grow 6s ease-in-out infinite}
+.gap{animation:gap 6s ease-in-out infinite}
+.up{stroke-dasharray:1;animation:draw 6s ease-in-out infinite}
+.tile{transform-box:fill-box;transform-origin:50% 100%;animation:bump 6s ease-out infinite}
+.go{animation:march 2s linear infinite}
+@keyframes grow{0%{transform:scaleY(.35)}40%,88%{transform:scaleY(1)}100%{transform:scaleY(.35)}}
+@keyframes gap{0%,38%{opacity:0}48%,88%{opacity:1}100%{opacity:0}}
+@keyframes draw{0%,45%{stroke-dashoffset:1}70%,88%{stroke-dashoffset:0}100%{stroke-dashoffset:1}}
+@keyframes bump{0%,66%{transform:scale(1)}74%{transform:scale(1.06)}84%,100%{transform:scale(1)}}
+@keyframes march{to{stroke-dashoffset:-28}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<!-- chart -->
+<rect x="40" y="28" width="340" height="188" rx="16" fill="#ffffff" stroke="#2f8f5b"/>
+<path d="M62 186h296"/>
+<rect x="88" y="92" width="70" height="94" rx="5" stroke="#c9c2b3" stroke-width="3" stroke-dasharray="6 8"/>
+<path d="M158 92h132" stroke="#c9c2b3" stroke-width="3" stroke-dasharray="6 8"/>
+<rect class="act" x="220" y="56" width="70" height="130" rx="5" fill="#e3f1e8"/>
+<g class="gap" stroke="#e8963f" stroke-width="4">
+<path d="M310 56v36M302 56h16M302 92h16"/>
+</g>
+<text x="123" y="238" font-size="26" fill="#2f8f5b" text-anchor="middle">Expected</text>
+<text x="255" y="238" font-size="26" fill="#2f8f5b" text-anchor="middle">Actual</text>
+<!-- link -->
+<path class="go" d="M392 122h28" stroke="#e8963f" stroke-width="4" stroke-dasharray="2 12"/>
+<!-- stock tile -->
+<g class="tile">
+<rect x="440" y="48" width="160" height="152" rx="16" fill="#ffffff" stroke="#2f8f5b"/>
+</g>
+<path class="up" pathLength="1" d="M466 168L498 136L520 154L566 98" stroke="#e8963f" stroke-width="5"/>
+<path d="M544 98h22v22" stroke="#e8963f" stroke-width="5"/>
+<text x="520" y="238" font-size="26" fill="#2f8f5b" text-anchor="middle">Stock</text>
+</svg>

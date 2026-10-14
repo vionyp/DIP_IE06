@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" fill="none" stroke="#2f8f5b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<title>Earnings report with revenue, EPS and margin bars filling, plus the earnings call</title>
+<style>
+text{font-family:system-ui,"Segoe UI",sans-serif;font-weight:700;stroke:none}
+.bar{transform-box:fill-box;transform-origin:0 50%;animation:fill 6s ease-in-out infinite}
+.b2{animation-delay:.4s}.b3{animation-delay:.8s}
+.wave{transform-box:fill-box;transform-origin:50% 50%;animation:talk 1.6s ease-in-out infinite alternate}
+.w2{animation-delay:-.4s}.w3{animation-delay:-.8s}.w4{animation-delay:-1.2s}.w5{animation-delay:-.2s}
+.go{animation:march 2s linear infinite}
+@keyframes fill{0%{transform:scaleX(.08)}40%,88%{transform:scaleX(1)}100%{transform:scaleX(.08)}}
+@keyframes talk{from{transform:scaleY(.4)}to{transform:scaleY(1)}}
+@keyframes march{to{stroke-dashoffset:-28}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect x="8" y="8" width="624" height="244" rx="28" fill="#fbf7ef" stroke="none"/>
+<!-- report card -->
+<rect x="40" y="28" width="300" height="184" rx="16" fill="#ffffff" stroke="#2f8f5b"/>
+<g stroke="none" fill="#e8eef7">
+<rect x="160" y="56" width="160" height="22" rx="11"/>
+<rect x="160" y="108" width="160" height="22" rx="11"/>
+<rect x="160" y="160" width="160" height="22" rx="11"/>
+</g>
+<rect class="bar" x="160" y="56" width="140" height="22" rx="11" fill="#e3f1e8"/>
+<rect class="bar b2" x="160" y="108" width="108" height="22" rx="11" fill="#e3f1e8"/>
+<rect class="bar b3" x="160" y="160" width="84" height="22" rx="11" fill="#fdebd3" stroke="#e8963f"/>
+<text x="58" y="75" font-size="22" fill="#2f8f5b">Revenue</text>
+<text x="58" y="127" font-size="22" fill="#2f8f5b">EPS</text>
+<text x="58" y="179" font-size="22" fill="#2f8f5b">Margin</text>
+<text x="190" y="238" font-size="26" fill="#2f8f5b" text-anchor="middle">Report</text>
+<!-- link -->
+<path class="go" d="M352 120h40" stroke="#e8963f" stroke-width="4" stroke-dasharray="2 12"/>
+<path d="M384 110l10 10-10 10" stroke="#e8963f" stroke-width="4"/>
+<!-- call -->
+<path d="M420 34h180a14 14 0 0 1 14 14v70a14 14 0 0 1-14 14H500l-12 18-4-18h-64a14 14 0 0 1-14-14V48a14 14 0 0 1 14-14z" fill="#ffffff"/>
+<g stroke="#e8963f" stroke-width="6">
+<path class="wave w1" d="M448 68v38"/>
+<path class="wave w2" d="M478 56v62"/>
+<path class="wave w3" d="M508 64v46"/>
+<path class="wave w4" d="M538 52v70"/>
+<path class="wave w5" d="M568 70v34"/>
+</g>
+<circle cx="476" cy="188" r="16" fill="#ffffff"/>
+<path d="M444 224q0-26 32-26t32 26" fill="#e8eef7"/>
+<text x="540" y="238" font-size="26" fill="#2f8f5b" text-anchor="middle">Call</text>
+</svg>
