@@ -421,8 +421,8 @@ require __DIR__ . '/../includes/header.php';
 
     <?php else: // summary ?>
         <div class="quiz-score">
-            <img src="../assets/img/<?= $score === $total ? 'mascot-correct.png' : 'mascot-incorrect.png' ?>"
-                 alt="" class="score-mascot">
+            <img src="../assets/img/animations/<?= $score === $total ? 'mascot-correct-natural-v5.gif' : 'mascot-incorrect-natural-v5.gif' ?>"
+                 alt="" class="score-mascot mascot-animated">
             <h2>You scored <?= $score ?> / <?= $total ?></h2>
             <?php if ($streak !== null): ?>
             <p class="streak-note">🔥 Current streak: <?= $streak['current_streak'] ?> day<?= $streak['current_streak'] === 1 ? '' : 's' ?></p>

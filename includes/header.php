@@ -24,6 +24,7 @@ require_once __DIR__ . '/auth.php';
 <?php foreach (($extra_css ?? []) as $css): ?>
 <link rel="stylesheet" href="<?= $base_url ?>/<?= htmlspecialchars($css) ?>">
 <?php endforeach; ?>
+<link rel="stylesheet" href="<?= $base_url ?>/assets/css/mascot-animations.css?v=<?= filemtime(__DIR__ . '/../assets/css/mascot-animations.css') ?>">
 </head>
 <body>
 <header class="site-header">

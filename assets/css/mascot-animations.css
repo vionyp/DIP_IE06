@@ -1,0 +1,26 @@
+.mascot-animated {
+    animation: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    object-fit: contain !important;
+    background: transparent !important;
+}
+
+/* Keep the same page footprint as the original 1408 x 768 mascot PNGs. */
+.hero-img.mascot-animated,
+.score-mascot.mascot-animated,
+.overlay-mascot.mascot-animated {
+    aspect-ratio: 11 / 6;
+}
+
+/* The original login mascot used a fixed square badge at both breakpoints. */
+.auth-side img.mascot-animated {
+    height: 132px;
+}
+
+@media (max-width: 680px) {
+    .auth-side img.mascot-animated {
+        height: 56px;
+    }
+}

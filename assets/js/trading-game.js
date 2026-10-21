@@ -732,7 +732,7 @@
         }).join('');
 
         $('end-content').innerHTML =
-            '<img class="overlay-mascot" src="' + esc(CFG.imgBase + (ret >= 0 ? 'mascot-correct.png' : 'mascot-incorrect.png')) + '" alt="">' +
+            '<img class="overlay-mascot mascot-animated" src="' + esc(CFG.imgBase + 'animations/' + (ret >= 0 ? 'mascot-correct-natural-v5.gif' : 'mascot-incorrect-natural-v5.gif')) + '" alt="">' +
             '<h1>' + (ret >= 0 ? 'Market closed, nice trading!' : 'Market closed. Tough year.') + '</h1>' +
             '<p class="end-reason">' + esc(reasonText) + '</p>' +
             '<div class="end-stats">' +

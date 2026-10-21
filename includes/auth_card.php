@@ -20,7 +20,7 @@ $auth_next_qs  = $auth_next !== null ? 'next=' . urlencode($auth_next) : '';
 ?>
 <div class="auth-card" data-auth-card>
     <div class="auth-side">
-        <img src="<?= $base_url ?>/assets/img/mascot-base.png" alt="">
+        <img src="<?= $base_url ?>/assets/img/animations/mascot-base-natural-v5.gif" alt="" class="mascot-animated">
         <h2>Welcome to StockSense</h2>
         <p>Your quiz answers, daily streak and trading-game scores are saved to your account.</p>
     </div>

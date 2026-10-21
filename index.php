@@ -61,7 +61,7 @@ require __DIR__ . '/includes/header.php';
 ?>
 
 <section class="hero">
-    <img src="assets/img/hero-landing.png" alt="StockSense capybara mascot next to a rising stock chart" class="hero-img">
+    <img src="assets/img/animations/mascot-hero-3d-v2.gif" alt="StockSense capybara mascot next to a rising stock chart" class="hero-img mascot-animated">
     <div class="hero-copy">
         <h1>Understand <em>why</em> chip stocks move.</h1>
         <p>StockSense teaches you to read semiconductor-sector news like an analyst —

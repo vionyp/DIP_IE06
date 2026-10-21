@@ -217,7 +217,7 @@ require __DIR__ . '/../includes/header.php';
     <!-- Start screen -->
     <div class="game-overlay" id="start-screen">
         <div class="overlay-box">
-            <img class="overlay-mascot" src="../assets/img/mascot-base.png" alt="">
+            <img class="overlay-mascot mascot-animated" src="../assets/img/animations/mascot-base-natural-v5.gif" alt="">
             <h1>The Trading Floor</h1>
             <p>You have <strong>$100,000</strong> of play money and one year on the trading floor.
                The chart is a simulated <strong>SOXX</strong>, a basket of semiconductor stocks.
