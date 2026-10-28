@@ -371,6 +371,19 @@ kbd {
 .review-why { font-size: 0.84rem; color: var(--muted); margin: 0; }
 .review-why em { display: block; margin-top: 2px; }
 .review-push { font-size: 0.78rem; color: var(--muted); margin: 4px 0 0; }
+.review-summary { font-size: 0.84rem; color: var(--text); margin: 0 0 4px; }
+.review-source { font-size: 0.8rem; margin: 4px 0 0; }
+.news-company { font-size: 0.8rem; color: var(--muted); margin: 2px 0 0; }
+.news-ticker {
+    display: inline-block;
+    font-weight: 800;
+    font-size: 0.72rem;
+    color: var(--text);
+    background: #f3f1ec;
+    border-radius: 6px;
+    padding: 0 6px;
+    margin-right: 2px;
+}
 .end-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
 /* ---------- Responsive ---------- */

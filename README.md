@@ -127,38 +127,51 @@ category the user hasn't started yet.
 
 ## 4. Trading game (`pages/game.php`)
 
-A trading game in the style of *The Invisible Hand*. Players get $100,000 of
-play money and trade a simulated **SOXX** (semiconductor ETF) chart for up to one
-trading year, while anonymized headlines appear in a Newswire on the left.
+A trading game in the style of *The Invisible Hand* that replays **real
+history**. Players get $100,000 of play money and trade **real SOXX**
+(iShares Semiconductor ETF) prices for up to one trading year, while the real
+headlines from `news_articles` appear in a Newswire on the left on the days
+they happened.
 
 **Setup (one time, after `sql/schema.sql`):** in phpMyAdmin, select the
-`stocksense` database → **Import** → `sql/migrations/002_trading_game.sql`
-(character set `utf8mb4`). This creates `game_news` (153 headlines) and
-`game_results` (high scores). The file is safe to re-import.
+`stocksense` database → **Import**, then import these files with character set
+`utf8mb4`. Both are safe to re-import.
+1. `sql/migrations/002_trading_game.sql`: `game_results` (high scores) and
+   `game_news` (one-line lesson takeaways for the end screen).
+2. `sql/migrations/010_game_real_soxx.sql`: `game_soxx_daily`, the real daily
+   SOXX open/high/low/close from Jan 2022 (split-adjusted).
 
-**Playing:** the chart moves forward on its own (pause, 1x/2x/4x speed), with
-Daily, Weekly and Yearly views. Use **Long**, **Short** and **Close position**,
-or the keyboard shortcuts Space (pause), L (long), S (short) and C (close).
-The game ends at day 252, or earlier if you click **End game**. The end screen
-compares your return with simply holding SOXX, reviews every headline you saw,
-and saves the result to the high-score table.
+To add newer trading days later, run `php api/fetch_game_prices.php`
+(on Windows: `C:\xampp\php\php.exe api\fetch_game_prices.php`).
 
-**How prices move** (`assets/js/trading-game.js`):
-- Between headlines, the price follows a random walk.
-- Each `game_news` row has an `impact` from −3 (very bearish) to +3 (very bullish)
-  for the whole sector, judged from the lessons.
-- The headline's category decides *how* the price reacts (`IMPACT_PROFILES`):
-  geopolitical news is a sudden shock that partly reverses, earnings news gaps
-  and then drifts, macro news hits the whole sector and keeps rippling, supply-chain
-  news starts small and builds, and corporate news is a small move that fades.
-- Speed, volatility, news frequency and impact size are constants at the top
-  of that file.
+**Playing:** each game picks a random one-year window between the first and
+last real headline, and the real dates are hidden ("Day 1, Day 2…"). The chart
+moves forward on its own (pause, 1x/2x/4x speed), with Daily, Weekly and Yearly
+views. Use **Long**, **Short** and **Close position**, or the keyboard shortcuts
+Space (pause), L (long), S (short) and C (close). The game ends at day 252, or
+earlier if you click **End game**. The end screen reveals the real dates,
+compares your return with simply holding SOXX, and lists every headline with
+its real date, summary, SOXX's next-session move, whether you were positioned
+the right way, and a link to the original article. Results are saved to the
+high-score table.
 
-**News data:** `game_news` holds the same articles as `news_articles`, but real
-company names are swapped for fictional ones (e.g. Micron → Company ABC), and
-product names, people and years are made generic. The full name key is in the
-comments of the migration file. To add a headline, insert a row with a
-`category`, `impact` and one-line `explanation`. Set `is_active = 0` to hide one.
+**How it uses the real data** (`assets/js/trading-game.js`):
+- Every game day uses the real SOXX candle. Real data is daily only, so the
+  15-minute path *inside* a day is simulated, but it always opens, touches the
+  high and low, and closes at the real prices.
+- `news_articles.published_at` is the day a story happened, and
+  `price_change_*` measure the **following session**. So each headline breaks
+  after that day's close, and the player can trade at that close before the
+  next session reacts. Weekend stories break before Monday's open.
+- During play only the headline, ticker and company are shown. Years in
+  headlines are made relative (e.g. "[next year]"). Summaries often say how
+  the stock reacted, so they only appear on the end screen.
+- Game length, history length and speed are constants at the top of that file.
+
+**Adding headlines:** add a real row to `news_articles` and it appears in the
+game automatically. Optionally add a `game_news` row with `source_article_id`
+pointing to it and a one-line `explanation`, which is shown as the lesson on the
+end screen. The `impact` column in `game_news` is no longer used.
 
 ---
 

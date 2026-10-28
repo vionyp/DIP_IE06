@@ -1,0 +1,200 @@
+/* =====================================================================
+   StockSense — interface refresh (bigger images, clearer home page)
+   Loaded after style.css and mascot-animations.css in includes/header.php,
+   so these rules win without editing the shared stylesheet. To undo the
+   refresh, remove the <link> to this file.
+   ===================================================================== */
+
+/* ---------- Header logo ---------- */
+.brand { font-size: 1.6rem; display: inline-flex; align-items: center; gap: 8px; }
+.brand-mark { font-size: 1.9rem; line-height: 1; }
+
+/* ---------- Home: hero ---------- */
+.hero { gap: 24px; padding: 8px 0 32px; }
+.hero-img { flex: 1 1 460px; max-width: 600px; }
+.hero-copy { flex: 1 1 400px; }
+.hero-copy h1 { font-size: 2.6rem; line-height: 1.15; margin: 0 0 16px; }
+.hero-lead { font-size: 1.12rem; margin: 0 0 12px; }
+.hero-points {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 4px;
+    display: grid;
+    gap: 6px;
+}
+.hero-points li { display: flex; gap: 10px; align-items: baseline; }
+.hero-points li::before {
+    content: "✓";
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #dcf0e4;
+    color: #2f8f5b;
+    font-weight: 800;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---------- Home: mission statement ---------- */
+.mission {
+    position: relative;
+    margin: 0 0 48px;
+    padding: 36px 40px;
+    border-radius: 24px;
+    background: #fff;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+.mission::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 72px;
+    height: 4px;
+    margin-left: -36px;
+    border-radius: 0 0 4px 4px;
+    background: var(--brand-orange);
+}
+.mission-eyebrow {
+    margin: 0 0 10px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-orange);
+}
+.mission-statement {
+    margin: 0 auto;
+    max-width: 820px;
+    font-size: 1.45rem;
+    line-height: 1.45;
+    font-weight: 700;
+    color: var(--brand-blue);
+}
+.mission-sub { margin: 14px auto 0; max-width: 680px; color: var(--muted); }
+
+/* ---------- Home: "How it works" overview banner — bigger pictures ---------- */
+.overview-banner { --overview-height: 400px; }
+.overview-main img { width: 160px; }
+.overview-title { font-size: 1.5rem; }
+.overview-step {
+    display: inline-block;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+.section-heading { text-align: center; color: var(--brand-blue); font-size: 1.7rem; margin: 0 0 8px; }
+.section-sub { text-align: center; color: var(--muted); margin: 0 auto 24px; max-width: 640px; }
+
+/* ---------- Home: what you'll be able to do ---------- */
+.outcomes { margin: 0 0 48px; }
+.outcomes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+.outcome {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid var(--border);
+}
+.outcome-num {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--brand-blue);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.outcome h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.outcome p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+/* ---------- Home: "Why StockSense" — bigger icons ---------- */
+.usp-icon { width: 140px; height: 128px; margin-bottom: 18px; }
+.usp-icon img { width: 92px; height: 92px; }
+.usp-item h3 { font-size: 1.2rem; }
+
+/* ---------- Dashboard ---------- */
+.dashboard-intro { margin: -8px 0 24px; color: var(--muted); font-size: 1.05rem; max-width: 760px; }
+.streak-flame { font-size: 3rem; }
+.category-card img { width: 96px; height: 96px; }
+@media (hover: hover) and (min-width: 901px) {
+    .expand-cards { --expand-height: 480px; }
+    .expand-cards .card-main { transform: translateY(64px); }
+    .expand-cards .card-main img { width: 140px; height: 140px; transform: scale(0.86); }
+}
+@media (hover: none), (max-width: 900px) {
+    .expand-cards .card-main img { width: 96px; height: 96px; }
+}
+.game-promo {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 28px;
+    padding: 24px 28px;
+    border-radius: 20px;
+    color: #fff;
+    background: url("../img/doodles/pattern.svg"), linear-gradient(160deg, var(--brand-blue), #41679f);
+    box-shadow: 0 12px 36px rgba(44, 74, 124, 0.16);
+}
+.game-promo img { width: 150px; height: auto; flex-shrink: 0; }
+.game-promo h2 { margin: 0 0 6px; color: #fff; }
+.game-promo p { margin: 0 0 14px; opacity: 0.92; }
+.game-promo .btn { background: #fff; color: var(--brand-blue); }
+
+/* ---------- Mascot GIFs: show them big ----------
+   The animated GIFs are portrait (400 x 450/500) with empty space around
+   the mascot, but mascot-animations.css squeezes them into a wide 11:6 box,
+   which made the mascot tiny. Crop to the mascot instead. */
+.hero-img.mascot-animated {
+    aspect-ratio: 4 / 3;
+    object-fit: cover !important;
+    object-position: 50% 70%;
+    width: 100%;
+}
+.score-mascot.mascot-animated,
+.overlay-mascot.mascot-animated,
+.auth-side img.mascot-animated {
+    aspect-ratio: 400 / 330;
+    object-fit: cover !important;
+    object-position: 50% 50%;
+}
+
+/* ---------- Other images across the site ---------- */
+.trail-icon { width: 96px; height: 96px; }
+.lesson-step img { width: 56px; height: 56px; }
+.score-mascot { width: 220px; }
+.overlay-mascot { width: 180px; }
+.auth-side img.mascot-animated { width: 220px; height: auto; }
+
+/* ---------- Small screens ---------- */
+@media (max-width: 700px) {
+    .hero-copy h1 { font-size: 2rem; }
+    .hero-img, .hero-img.mascot-animated { flex: none; width: 100%; max-width: 420px; }
+    .mission { padding: 28px 20px; }
+    .mission-statement { font-size: 1.2rem; }
+    .outcomes-grid { grid-template-columns: 1fr; }
+    .game-promo { flex-direction: column; text-align: center; }
+    .brand { font-size: 1.25rem; }
+    .brand-mark { font-size: 1.5rem; }
+}
+@media (max-width: 680px) {
+    .auth-side img.mascot-animated { width: 96px; height: auto; }
+}

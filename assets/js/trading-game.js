@@ -1,55 +1,34 @@
 // StockSense — Trading Game (pages/game.php)
 //
-// Everything runs in the browser. The price is a simulated SOXX:
-//   * a random walk most of the time, plus
-//   * news shocks. Each headline in game_news has an `impact` from -3 to +3
-//     (bearish ... bullish for the semiconductor sector). The headline's
-//     CATEGORY decides how that impact plays out over time, following the
-//     lessons — see IMPACT_PROFILES below.
+// Everything runs in the browser. The game replays REAL history:
+//   * CFG.prices holds real SOXX daily candles [date, open, high, low, close]
+//     (table game_soxx_daily). Each game picks a random ~1-year window.
+//   * CFG.news holds the real headlines from news_articles. published_at is
+//     the day the story happened, and the lessons/quizzes measure the
+//     reaction in the FOLLOWING session (price_change_stock/_sector). So a
+//     headline breaks after the close of its publish day — before the next
+//     session opens — and the player can trade at that close. Weekend or
+//     holiday stories break before the next session too.
+//   * Real dates are hidden ("Day 1, Day 2…") until the end screen.
 //
 // Time: 1 trading day = TICKS_PER_DAY ticks (15-minute steps, 9:30–16:00).
+// Real data is daily, so the path INSIDE a day is simulated — but every day
+// still opens, touches its high and low, and closes at the real SOXX prices.
 // At 1x speed a day lasts ~3 seconds. A game lasts up to GAME_DAYS days.
 (function () {
     'use strict';
 
     var CFG = window.STOCKSENSE_GAME;
-    if (!CFG) return;
+    if (!CFG || !CFG.prices || CFG.prices.length < 300) return;
 
     // ------------------------------------------------------------------
     // Tunable settings
     // ------------------------------------------------------------------
     var TICKS_PER_DAY  = 26;          // 15-minute steps from 9:30 to 16:00
     var GAME_DAYS      = 252;         // one trading year
-    var HISTORY_DAYS   = 252;         // pre-game history so the Yearly view isn't empty
+    var HISTORY_DAYS   = 252;         // real days shown before the game starts (Yearly view)
     var BASE_TICK_MS   = 3000 / TICKS_PER_DAY;  // 1x speed = 3 seconds per day
-    var DAILY_VOL      = 0.015;       // ~1.5% typical daily move from randomness alone
-    var DAILY_DRIFT    = 0.0002;      // tiny upward drift, like a real index
-    var NEWS_GAP_MIN   = 3;           // trading days between headlines
-    var NEWS_GAP_MAX   = 7;
     var MARGIN_CALL    = 0.5;         // short is force-closed if equity < 50% of short value
-
-    // % move per impact point, by category. Macro news moves the WHOLE sector;
-    // corporate news is mostly about one company, so the ETF barely notices.
-    var CATEGORY_SCALE = {
-        macro: 1.6, geopolitical: 1.3, earnings: 1.3, supply_chain: 1.1, corporate: 0.7
-    };
-
-    // How the move unfolds after a headline breaks (from the lessons):
-    //   immediate  share of the move in the first `immTicks` ticks
-    //   follow     extra share spread over the next `followDays` days
-    //              (negative = partial reversal / fade)
-    var IMPACT_PROFILES = {
-        geopolitical: { immediate: 1.0,  immTicks: 3,  follow: -0.3, followDays: 8,
-            how: 'Hits suddenly, like an overnight ban, then partly reverses as companies adapt.' },
-        earnings:     { immediate: 0.8,  immTicks: 3,  follow: 0.2,  followDays: 4,
-            how: 'Fast jump or drop on the surprise, then a smaller follow-through drift.' },
-        macro:        { immediate: 0.55, immTicks: 8,  follow: 0.45, followDays: 6,
-            how: 'Hits the whole sector, and keeps rippling for days as rates and demand reprice.' },
-        supply_chain: { immediate: 0.35, immTicks: 10, follow: 0.65, followDays: 5,
-            how: 'Small first reaction that builds over the next few days as it ripples through the supply chain.' },
-        corporate:    { immediate: 1.0,  immTicks: 3,  follow: -0.5, followDays: 4,
-            how: 'Mostly about one company, so the sector move is small and partly fades.' }
-    };
 
     // ------------------------------------------------------------------
     // Helpers
@@ -72,13 +51,6 @@
         return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
     }
     function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
-    function shuffle(arr) {
-        for (var i = arr.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
-        }
-        return arr;
-    }
     function timeLabel(tickInDay) {
         var mins = 9 * 60 + 30 + tickInDay * 15;
         var h = Math.floor(mins / 60), m = mins % 60;
@@ -86,9 +58,76 @@
         var h12 = h > 12 ? h - 12 : h;
         return h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
     }
+    var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    function fmtDate(iso) { // '2024-03-07' -> 'Mar 7, 2024'
+        var p = iso.split('-');
+        return MONTHS[+p[1] - 1] + ' ' + (+p[2]) + ', ' + p[0];
+    }
     // global tick index -> day number (day 1 = first game day; <= 0 = history)
     function dayOfGt(gt) { return Math.floor(gt / TICKS_PER_DAY) + 1; }
     function tickOfGt(gt) { return ((gt % TICKS_PER_DAY) + TICKS_PER_DAY) % TICKS_PER_DAY; }
+
+    // ------------------------------------------------------------------
+    // Real data: choose the window, map days <-> real candles
+    // ------------------------------------------------------------------
+    var P = CFG.prices;   // [[date, o, h, l, c], ...] oldest first
+    var W = 0;            // index in P of game day 1
+
+    function candle(day) { return P[W + day - 1]; }          // real candle for a game day
+    function realDate(day) { var c = candle(day); return c ? c[0] : null; }
+
+    // Index of the first trading day on/after an ISO date (news on a weekend
+    // or holiday breaks on the next trading day).
+    function tradingIndexOnOrAfter(iso) {
+        var lo = 0, hi = P.length;
+        while (lo < hi) {
+            var mid = (lo + hi) >> 1;
+            if (P[mid][0] < iso) lo = mid + 1; else hi = mid;
+        }
+        return lo;
+    }
+
+    function chooseWindow() {
+        var news = CFG.news;
+        var firstNews = news.length ? reactionIndex(news[0].published_date) : 0;
+        var lastNews = news.length ? reactionIndex(news[news.length - 1].published_date) : P.length - 1;
+        // The whole year should sit inside the stretch that has real headlines.
+        var minStart = Math.max(firstNews, 1);
+        var maxStart = Math.min(lastNews, P.length - 1) - GAME_DAYS + 1;
+        if (maxStart < minStart) {                // not enough headline history: use any full year
+            minStart = 1;
+            maxStart = P.length - GAME_DAYS;
+        }
+        if (maxStart < minStart) {                // less than a year of prices at all
+            GAME_DAYS = P.length - 1;
+            maxStart = minStart = 1;
+        }
+        W = randInt(minStart, maxStart);
+        HISTORY_DAYS = Math.min(HISTORY_DAYS, W);
+    }
+
+    // Simulated 15-minute path for one real day: starts at the real open,
+    // touches the real high and low at random times, ends at the real close.
+    function dayPath(c) {
+        var T = TICKS_PER_DAY, o = c[1], h = c[2], l = c[3], cl = c[4];
+        var a = randInt(1, T - 2), b;
+        do { b = randInt(1, T - 2); } while (b === a);
+        var anchors = [[0, o], [a, h], [b, l], [T - 1, cl]].sort(function (x, y) { return x[0] - y[0]; });
+        var path = new Array(T);
+        var sigma = Math.max(h - l, o * 0.002) * 0.18;
+        for (var s = 0; s < anchors.length - 1; s++) {
+            var i0 = anchors[s][0], p0 = anchors[s][1], i1 = anchors[s + 1][0], p1 = anchors[s + 1][1];
+            var n = i1 - i0, walk = [0];
+            for (var k = 1; k <= n; k++) walk.push(walk[k - 1] + randn() * sigma);
+            for (k = 0; k <= n; k++) {
+                var t = k / n;
+                var v = p0 + (p1 - p0) * t + (walk[k] - t * walk[n]);   // Brownian bridge between anchors
+                path[i0 + k] = Math.min(h, Math.max(l, v));
+            }
+        }
+        path[0] = o; path[a] = h; path[b] = l; path[T - 1] = cl;
+        return path;
+    }
 
     // ------------------------------------------------------------------
     // State
@@ -97,15 +136,16 @@
 
     function newState() {
         return {
-            gt: 0,                 // next tick to simulate (global tick index)
+            gt: 0,                 // next tick to play (global tick index)
             price: 0,
-            startPrice: 0,         // price when the market opened on day 1
-            prices: {},            // gt -> price (all ticks, history included)
+            startPrice: 0,         // previous close when the game started
+            prices: {},            // gt -> price (ticks for the week before the start + all game ticks)
             bars: [],              // daily OHLC: {day, o, h, l, c}
-            pending: {},           // gt -> extra log-return from news effects
-            volBoostUntil: -Infinity,
-            newsSchedule: [],      // [{gt, item}], sorted
-            newsSeen: [],          // [{item, gt, price, move}]
+            paths: {},             // day -> simulated intraday path through the real candle
+            newsByDay: {},         // day -> [news items]
+            newsReleased: {},      // day -> true once that morning's headlines are out
+            newsSeen: [],          // [{item, gt, day, price}]
+            premarket: false,      // paused before the open with fresh headlines
             cash: CFG.startCash,
             shares: 0,             // + long, - short
             avg: 0,
@@ -119,16 +159,9 @@
         };
     }
 
-    // One simulated 15-minute step. Returns the new price.
-    function simulateTick(gt, prevPrice) {
-        var sigma = DAILY_VOL / Math.sqrt(TICKS_PER_DAY);
-        var mu = DAILY_DRIFT / TICKS_PER_DAY;
-        var volMult = gt <= S.volBoostUntil ? 1.25 : 1;
-        // overnight gap at the open is a little larger than an intraday step
-        if (tickOfGt(gt) === 0) volMult *= 1.8;
-        var r = mu + sigma * volMult * randn() + (S.pending[gt] || 0);
-        delete S.pending[gt];
-        return Math.max(1, prevPrice * Math.exp(r));
+    function pathFor(day) {
+        if (!S.paths[day]) S.paths[day] = dayPath(candle(day));
+        return S.paths[day];
     }
 
     function recordTick(gt, price) {
@@ -145,73 +178,70 @@
     }
 
     function buildHistory() {
-        var p = 150 + Math.random() * 100;
-        var firstGt = -HISTORY_DAYS * TICKS_PER_DAY;
-        for (var gt = firstGt; gt < 0; gt++) {
-            p = simulateTick(gt, p);
-            recordTick(gt, p);
+        // Real daily candles before day 1 (for the Yearly view) …
+        for (var d = 1 - HISTORY_DAYS; d <= 0; d++) {
+            var c = candle(d);
+            S.bars.push({ day: d, o: c[1], h: c[2], l: c[3], c: c[4] });
         }
-        S.price = p;
-        // drop tick-level detail older than a week to keep memory small
-        for (var k in S.prices) {
-            if (+k < -6 * TICKS_PER_DAY) delete S.prices[k];
+        // … plus 15-minute ticks for the last 5 of them (Daily/Weekly views).
+        for (d = Math.max(1 - HISTORY_DAYS, -4); d <= 0; d++) {
+            var path = pathFor(d);
+            for (var t = 0; t < TICKS_PER_DAY; t++) S.prices[(d - 1) * TICKS_PER_DAY + t] = path[t];
         }
+        S.price = candle(0)[4];
+        S.startPrice = S.price;
+    }
+
+    // Trading day (index into P) whose session is the first one AFTER the story.
+    function reactionIndex(iso) {
+        var j = tradingIndexOnOrAfter(iso);
+        return (P[j] && P[j][0] === iso) ? j + 1 : j;
     }
 
     function scheduleNews() {
-        var pool = shuffle(CFG.news.slice());
-        var day = randInt(2, 3);
-        var i = 0;
-        while (day <= GAME_DAYS - 2 && i < pool.length) {
-            var tick = randInt(1, TICKS_PER_DAY - 10); // early enough to react the same day
-            S.newsSchedule.push({ gt: (day - 1) * TICKS_PER_DAY + tick, item: pool[i++] });
-            day += randInt(NEWS_GAP_MIN, NEWS_GAP_MAX);
-        }
+        CFG.news.forEach(function (item) {
+            var day = reactionIndex(item.published_date) - W + 1;
+            if (day < 1 || day > GAME_DAYS) return;
+            (S.newsByDay[day] = S.newsByDay[day] || []).push(item);
+        });
     }
-
-    // Turn a headline into future price nudges, starting on the NEXT tick
-    // (so a player who is paying attention gets a chance to react).
-    function applyNewsEffect(item, gt0) {
-        var prof = IMPACT_PROFILES[item.category] || IMPACT_PROFILES.corporate;
-        var scale = CATEGORY_SCALE[item.category] || 1;
-        var move = item.impact === 0
-            ? (Math.random() - 0.5) * 0.008                      // mixed news: small, random direction
-            : item.impact * scale / 100 * (0.75 + Math.random() * 0.5);
-        var i;
-        for (i = 0; i < prof.immTicks; i++) {
-            addPending(gt0 + i, move * prof.immediate / prof.immTicks);
-        }
-        var n = prof.followDays * TICKS_PER_DAY;
-        for (i = 0; i < n; i++) {
-            addPending(gt0 + prof.immTicks + i, move * prof.follow / n);
-        }
-        S.volBoostUntil = Math.max(S.volBoostUntil, gt0 + 2 * TICKS_PER_DAY);
-        return move;
-    }
-    function addPending(gt, r) { S.pending[gt] = (S.pending[gt] || 0) + r; }
 
     // ------------------------------------------------------------------
     // Game loop
     // ------------------------------------------------------------------
     function step() {
         var gt = S.gt;
-        if (dayOfGt(gt) > GAME_DAYS) { endGame('time'); return; }
+        var day = dayOfGt(gt), tick = tickOfGt(gt);
+        if (day > GAME_DAYS) { endGame('time'); return; }
 
-        S.price = simulateTick(gt, S.price);
-        recordTick(gt, S.price);
-        if (gt === 0) S.startPrice = S.price;
-
-        // Headlines scheduled for this tick
-        while (S.newsSchedule.length && S.newsSchedule[0].gt <= gt) {
-            var n = S.newsSchedule.shift();
-            var seen = { item: n.item, gt: gt, price: S.price };
-            seen.move = applyNewsEffect(n.item, gt + 1);
-            S.newsSeen.push(seen);
-            showNews(seen);
-            if ($('pause-on-news').checked) {
+        // Before the open: headlines from the previous session (or the
+        // weekend) break now, so the player can trade at the last close.
+        if (tick === 0 && !S.newsReleased[day]) {
+            S.newsReleased[day] = true;
+            var items = S.newsByDay[day] || [];
+            items.forEach(function (item) {
+                var seen = { item: item, gt: gt, day: day, price: S.price };
+                S.newsSeen.push(seen);
+                showNews(seen);
+            });
+            if (items.length && $('pause-on-news').checked) {
+                S.premarket = true;
                 setRunning(false);
-                flash('News just broke! Read it, decide, then press ▶ to continue.', 'info');
+                flash((items.length > 1 ? items.length + ' headlines' : 'A headline') +
+                    ' broke after the last close! Read, decide, then press ▶ to open the market.', 'info');
+                dirty = true;
+                return;
             }
+        }
+
+        S.premarket = false;
+        S.price = pathFor(day)[tick];
+        recordTick(gt, S.price);
+        if (tick === 0) {
+            // remember which way the player was positioned when the bell rang
+            S.newsSeen.forEach(function (seen) {
+                if (seen.day === day) seen.position = Math.sign(S.shares);
+            });
         }
 
         S.gt++;
@@ -332,6 +362,22 @@
     // ------------------------------------------------------------------
     // News feed
     // ------------------------------------------------------------------
+    // Years in a headline would give away when the game is set, so during
+    // play they become relative: "growth in 2024" -> "growth in [next year]".
+    function maskYears(text, day) {
+        var nowYear = +realDate(day).slice(0, 4);
+        return String(text).replace(/\b(19[89]\d|20[0-4]\d)\b/g, function (y) {
+            var d = +y - nowYear;
+            if (d === 0) return '[this year]';
+            if (d === 1) return '[next year]';
+            if (d === -1) return '[last year]';
+            return d > 0 ? '[in ' + d + ' years]' : '[' + (-d) + ' years ago]';
+        });
+    }
+
+    // During play only the headline is shown: the article summaries often
+    // say how the stock reacted, which would give the answer away. The full
+    // summary, real date and source link appear on the end screen.
     function showNews(seen) {
         var item = seen.item;
         var cat = CFG.categories[item.category] || { label: item.category, color: '#555', icon: '' };
@@ -344,10 +390,11 @@
             '<div class="news-meta">' +
                 (cat.icon ? '<img src="' + esc(CFG.imgBase + cat.icon) + '" alt="">' : '') +
                 '<span class="news-cat">' + esc(cat.label) + '</span>' +
-                '<span class="news-time">Day ' + dayOfGt(seen.gt) + ' · ' + timeLabel(tickOfGt(seen.gt)) + '</span>' +
+                '<span class="news-time">Before Day ' + seen.day + ' opens</span>' +
             '</div>' +
-            '<h3>' + esc(item.headline) + '</h3>' +
-            '<p>' + esc(item.summary) + '</p>';
+            '<h3>' + esc(maskYears(item.headline, seen.day)) + '</h3>' +
+            (item.ticker ? '<p class="news-company"><span class="news-ticker">' + esc(item.ticker) + '</span> ' +
+                esc(item.company || '') + '</p>' : '');
         var feed = $('news-feed');
         feed.insertBefore(el, feed.firstChild);
         feed.scrollTop = 0;
@@ -376,7 +423,6 @@
         var bars = S.bars;
         var today = bars[bars.length - 1];
         var prevClose = bars.length > 1 ? bars[bars.length - 2].c : today.o;
-        if (!S.started) prevClose = today.o;
 
         $('price-now').textContent = fmtMoney(S.price);
         var ch = S.price - prevClose;
@@ -386,8 +432,12 @@
 
         var tick = S.started ? tickOfGt(Math.max(0, S.gt - 1)) : 0;
         $('clock-day').textContent = 'Day ' + curDay + ' of ' + GAME_DAYS + ' · Week ' + Math.ceil(curDay / 5);
-        $('clock-time').textContent = timeLabel(tick);
-        $('day-progress').style.width = ((tick + 1) / TICKS_PER_DAY * 100) + '%';
+        if (S.premarket) {
+            curDay = dayOfGt(S.gt);
+            $('clock-day').textContent = 'Day ' + curDay + ' of ' + GAME_DAYS + ' · Week ' + Math.ceil(curDay / 5);
+        }
+        $('clock-time').textContent = S.premarket ? 'Pre-market (opens 9:30 AM)' : timeLabel(tick);
+        $('day-progress').style.width = S.premarket ? '0%' : ((tick + 1) / TICKS_PER_DAY * 100) + '%';
 
         var eq = equity();
         $('acct-equity').textContent = fmtMoney(eq);
@@ -709,32 +759,52 @@
             : reason === 'bust' ? 'Your account ran out of money.'
             : 'You closed the trading floor on day ' + daysPlayed + '.';
 
+        var periodText = 'You were trading real SOXX prices from <strong>' + esc(fmtDate(realDate(1))) +
+            '</strong> to <strong>' + esc(fmtDate(realDate(daysPlayed))) + '</strong>.';
+
         var review = S.newsSeen.map(function (s) {
-            var later = S.prices[s.gt + TICKS_PER_DAY];
-            var endP = later !== undefined ? later : S.price;
-            var chg = (endP / s.price - 1) * 100;
-            var push = (Math.exp(s.move) - 1) * 100;
-            var cat = CFG.categories[s.item.category] || { label: s.item.category, color: '#555' };
-            var prof = IMPACT_PROFILES[s.item.category];
-            var lean = s.item.impact > 0 ? '<span class="lean up">Bullish</span>'
-                : s.item.impact < 0 ? '<span class="lean down">Bearish</span>'
-                : '<span class="lean">Mixed</span>';
+            var item = s.item;
+            var cat = CFG.categories[item.category] || { label: item.category, color: '#555' };
+            var c = candle(s.day), prev = candle(s.day - 1);
+            var played = s.position !== undefined;              // did the next session open?
+            var dayMove = (c[4] / prev[4] - 1) * 100;
+            var moveHtml = played
+                ? '<span class="review-move ' + (dayMove >= 0 ? 'up' : 'down') + '">SOXX ' + fmtPct(dayMove) + ' next session</span>'
+                : '<span class="review-move">Game ended before the open</span>';
+            var call = '';
+            if (played) {
+                if (s.position === 0) call = '<span class="lean">You were flat</span>';
+                else {
+                    var right = (s.position > 0) === (dayMove >= 0);
+                    call = '<span class="lean ' + (right ? 'up' : 'down') + '">You were ' +
+                        (s.position > 0 ? 'long' : 'short') + (right ? ' ✓' : ' ✗') + '</span>';
+                }
+            }
+            var stockMove = item.price_change_stock !== null && item.ticker
+                ? ' ' + esc(item.ticker) + ' itself moved ' + fmtPct(item.price_change_stock) + ' in that session.'
+                : '';
+            // the summaries were written for quizzes; drop the quiz-only sentence
+            var summary = String(item.summary)
+                .replace(/[;,]\s*(but |and )?(this|the) question is about the following session\./gi, '.')
+                .replace(/,\s*and the following session is the focus of this question\./gi, '.')
+                .replace(/\s*(The|This) question is about the following session\./gi, '')
+                .trim();
             return '<li style="--cat-color:' + esc(cat.color) + '">' +
                 '<div class="review-head"><span class="news-cat">' + esc(cat.label) + '</span>' +
-                '<span class="news-time">Day ' + dayOfGt(s.gt) + '</span>' + lean +
-                '<span class="review-move ' + (chg >= 0 ? 'up' : 'down') + '">' + fmtPct(chg) +
-                (later !== undefined ? ' next day' : ' until game end') + '</span></div>' +
-                '<p class="review-headline">' + esc(s.item.headline) + '</p>' +
-                '<p class="review-why"><strong>Why:</strong> ' + esc(s.item.explanation) +
-                (prof ? ' <em>' + esc(prof.how) + '</em>' : '') + '</p>' +
-                '<p class="review-push">This headline pushed the price ≈ ' + fmtPct(push) + ' in total (spread over the following days). Everything else was random market noise.</p>' +
+                '<span class="news-time">' + esc(fmtDate(item.published_date)) + ' · traded on Day ' + s.day + '</span>' +
+                call + moveHtml + '</div>' +
+                '<p class="review-headline">' + esc(item.headline) + '</p>' +
+                '<p class="review-summary">' + esc(summary) + stockMove + '</p>' +
+                (item.explanation ? '<p class="review-why"><strong>Lesson:</strong> ' + esc(item.explanation) + '</p>' : '') +
+                (item.source_url ? '<p class="review-source"><a href="' + esc(item.source_url) +
+                    '" target="_blank" rel="noopener">Read the original article</a></p>' : '') +
                 '</li>';
         }).join('');
 
         $('end-content').innerHTML =
             '<img class="overlay-mascot mascot-animated" src="' + esc(CFG.imgBase + 'animations/' + (ret >= 0 ? 'mascot-correct-natural-v5.gif' : 'mascot-incorrect-natural-v5.gif')) + '" alt="">' +
             '<h1>' + (ret >= 0 ? 'Market closed, nice trading!' : 'Market closed. Tough year.') + '</h1>' +
-            '<p class="end-reason">' + esc(reasonText) + '</p>' +
+            '<p class="end-reason">' + esc(reasonText) + ' ' + periodText + '</p>' +
             '<div class="end-stats">' +
                 '<div><span class="stat-label">Final net worth</span><span class="stat-value">' + fmtMoney(finalValue) + '</span></div>' +
                 '<div><span class="stat-label">Your return</span><span class="stat-value ' + (ret >= 0 ? 'up' : 'down') + '">' + fmtPct(ret) + '</span></div>' +
@@ -745,7 +815,7 @@
                 ? 'You <strong>beat</strong> simply buying and holding the ETF by ' + (ret - buyHold).toFixed(2) + ' percentage points.'
                 : 'Simply buying and holding the ETF would have done ' + (buyHold - ret).toFixed(2) + ' percentage points better. Timing the market is hard!') + '</p>' +
             '<div class="highscores" id="end-highscores"><p class="muted">Saving your result…</p></div>' +
-            (review ? '<h2>How the news moved the market</h2><ol class="news-review">' + review + '</ol>'
+            (review ? '<h2>The real headlines, and how SOXX reacted</h2><ol class="news-review">' + review + '</ol>'
                     : '<p class="muted">No headlines broke while you were trading. Try playing longer next time.</p>') +
             '<div class="end-actions"><button class="btn btn-primary" id="btn-again">Play again</button> ' +
             '<a class="btn btn-secondary" href="dashboard.php">Back to dashboard</a></div>';
@@ -790,6 +860,7 @@
         S = newState();
         canvas = $('price-chart');
         ctx = canvas.getContext('2d');
+        chooseWindow();
         buildHistory();
         scheduleNews();
 

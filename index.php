@@ -11,6 +11,7 @@ $show_ticker = true;
 // are what a panel reveals when it expands (hover or keyboard focus).
 $overview_panels = [
     [
+        'step'    => 'Step 1',
         'title'   => 'Learn',
         'tagline' => 'Short lessons on what moves chip stocks',
         'detail'  => 'Pick a news category and follow its lesson trail, one idea at a time.',
@@ -19,20 +20,42 @@ $overview_panels = [
         'img'     => 'overview-learn.svg',
     ],
     [
+        'step'    => 'Step 2',
         'title'   => 'Quiz',
-        'tagline' => 'Test yourself on semiconductor news',
+        'tagline' => 'Test yourself on real headlines',
         'detail'  => 'Guess how a stock reacted to a headline, then see the answer, an explanation and how the sector moved.',
         'cta'     => 'Take a quiz',
         'href'    => 'pages/dashboard.php',
         'img'     => 'overview-quiz.svg',
     ],
     [
+        'step'    => 'Step 3',
         'title'   => 'Trading Game',
-        'tagline' => 'Trade the news with play money',
-        'detail'  => 'Go long or short on a simulated SOXX chart with $100,000 of play money while headlines come in.',
+        'tagline' => 'Practise with play money',
+        'detail'  => 'Replay a real year of the SOXX chip index with $100,000 of play money. Real headlines break as they happened. Go long or short and see if you beat the market.',
         'cta'     => 'Play the game',
         'href'    => 'pages/game.php',
         'img'     => 'overview-game.svg',
+    ],
+];
+
+// "How StockSense helps you": what a student can do after using it.
+$outcomes = [
+    [
+        'title' => 'Read a headline like an analyst',
+        'text'  => 'Tell whether news hits one company or the whole chip sector, and roughly how hard.',
+    ],
+    [
+        'title' => 'Explain surprising moves',
+        'text'  => 'Understand why a stock can fall after "good" news, such as an earnings beat with weak guidance.',
+    ],
+    [
+        'title' => 'Connect the big forces',
+        'text'  => 'Link export bans, interest rates, supply-chain shocks and company decisions to chip stock prices.',
+    ],
+    [
+        'title' => 'Practise without risk',
+        'text'  => 'React to real headlines from real market history with play money, and learn from every result.',
     ],
 ];
 
@@ -64,15 +87,31 @@ require __DIR__ . '/includes/header.php';
     <img src="assets/img/animations/mascot-hero-3d-v2.gif" alt="StockSense capybara mascot next to a rising stock chart" class="hero-img mascot-animated">
     <div class="hero-copy">
         <h1>Understand <em>why</em> chip stocks move.</h1>
-        <p>StockSense teaches you to read semiconductor-sector news like an analyst —
-           short lessons, then real headline-to-price quizzes that show you the stock's
-           actual move next to the sector average. No trading, no portfolio, just news literacy.</p>
+        <p class="hero-lead">StockSense teaches engineering students how news moves the stocks of the
+           semiconductor industry they are training to join, in a few minutes a day.</p>
+        <ul class="hero-points">
+            <li>Short lessons on the five kinds of news that move chip stocks</li>
+            <li>Quizzes built from real headlines, with the real price move revealed</li>
+            <li>A trading game that replays real market history with play money</li>
+        </ul>
 
         <div class="flow-choice">
-            <a class="btn btn-primary btn-doodle doodle-arrows" href="pages/dashboard.php"<?= is_logged_in() ? '' : ' data-auth-open="login"' ?>>Enter the dashboard →</a>
+            <a class="btn btn-primary btn-doodle doodle-arrows" href="pages/dashboard.php"<?= is_logged_in() ? '' : ' data-auth-open="login"' ?>>Start learning →</a>
+            <a class="btn btn-secondary" href="pages/game.php"<?= is_logged_in() ? '' : ' data-auth-open="login"' ?>>Try the trading game</a>
         </div>
     </div>
 </section>
+
+<!-- Mission statement -->
+<section class="mission" aria-labelledby="mission-heading">
+    <p class="mission-eyebrow" id="mission-heading">Our mission</p>
+    <p class="mission-statement">To help engineering students understand the business side of semiconductors,
+       so that when a headline breaks, they know why chip stocks move and what it means for the industry.</p>
+    <p class="mission-sub">Free, bite-sized and built on real headlines. Educational only: no real money and no stock tips.</p>
+</section>
+
+<h2 class="section-heading">How StockSense works</h2>
+<p class="section-sub">Three steps, from first idea to practice. Hover over or tap a step to see more.</p>
 
 <!-- Overview banner: three panels side by side; the hovered / focused one widens
      and shows what it leads to. Text comes from $overview_panels at the top. -->
@@ -80,7 +119,8 @@ require __DIR__ . '/includes/header.php';
     <?php foreach ($overview_panels as $panel): ?>
     <a class="overview-panel" href="<?= htmlspecialchars($panel['href']) ?>">
         <span class="overview-main">
-            <img src="assets/img/<?= htmlspecialchars($panel['img']) ?>" alt="" width="120" height="96">
+            <img src="assets/img/<?= htmlspecialchars($panel['img']) ?>" alt="" width="160" height="128">
+            <span class="overview-step"><?= htmlspecialchars($panel['step']) ?></span>
             <span class="overview-title"><?= htmlspecialchars($panel['title']) ?></span>
             <span class="overview-tagline"><?= htmlspecialchars($panel['tagline']) ?></span>
         </span>
@@ -92,14 +132,21 @@ require __DIR__ . '/includes/header.php';
     <?php endforeach; ?>
 </section>
 
-<section class="about-section">
-    <h2>What is StockSense?</h2>
-    <p>StockSense is a free, gamified tool for learning how semiconductor-sector news moves stock
-       prices — the kind of reasoning an analyst does, not a stock tip. Each category pairs a short
-       lesson with quizzes built from real historical headlines, where you guess a stock's move and
-       then see it compared side-by-side with the SOXX sector benchmark. Daily streaks keep the habit
-       going. It never simulates real trading and holds no positions — see the
-       <a href="pages/disclaimer.php">disclaimer</a> for the full picture.</p>
+<!-- What the student will be able to do — the concrete benefit of using StockSense -->
+<section class="outcomes" aria-labelledby="outcomes-heading">
+    <h2 class="section-heading" id="outcomes-heading">How StockSense helps you</h2>
+    <p class="section-sub">After a few weeks of lessons, quizzes and games, you'll be able to:</p>
+    <div class="outcomes-grid">
+        <?php foreach ($outcomes as $i => $o): ?>
+        <div class="outcome">
+            <span class="outcome-num"><?= $i + 1 ?></span>
+            <div>
+                <h3><?= htmlspecialchars($o['title']) ?></h3>
+                <p><?= htmlspecialchars($o['text']) ?></p>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
 </section>
 
 <section class="usp-section">
@@ -108,7 +155,7 @@ require __DIR__ . '/includes/header.php';
         <?php foreach ($usp_points as $usp): ?>
         <div class="usp-item">
             <span class="usp-icon" style="--usp-tint: <?= htmlspecialchars($usp['tint']) ?>">
-                <img src="assets/img/<?= htmlspecialchars($usp['img']) ?>" alt="" width="64" height="64">
+                <img src="assets/img/<?= htmlspecialchars($usp['img']) ?>" alt="" width="92" height="92">
             </span>
             <h3><?= htmlspecialchars($usp['title']) ?></h3>
             <p><?= htmlspecialchars($usp['text']) ?></p>
@@ -123,8 +170,8 @@ require __DIR__ . '/includes/header.php';
         <h2>Before you start</h2>
         <p><strong>StockSense is an educational tool, not financial advice.</strong>
            Quiz answers reflect what happened historically, not a prediction of what will
-           happen next. This app never simulates real trading, and leveraged or margin
-           trading carries risk of loss beyond your deposit.</p>
+           happen next. The trading game uses play money only and never real trades, and
+           leveraged or margin trading carries risk of loss beyond your deposit.</p>
         <div class="modal-actions">
             <a class="btn btn-secondary btn-small" href="pages/disclaimer.php">Read the full disclaimer</a>
             <button class="btn btn-primary btn-small" id="disclaimer-ack">Got it</button>

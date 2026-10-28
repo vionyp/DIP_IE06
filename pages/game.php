@@ -2,17 +2,19 @@
 /**
  * StockSense — Trading Game.
  *
- * A Invisible-Hand-style market game: a simulated SOXX (semiconductor ETF)
- * chart ticks forward on its own, anonymized news pops up on the left,
- * and the player goes long or short with $100,000 of play money.
+ * An Invisible-Hand-style market game that replays REAL history: a random
+ * ~1-year window of real SOXX (semiconductor ETF) daily prices ticks
+ * forward on its own, the real headlines from news_articles pop up on the
+ * days they were published, and the player goes long or short with
+ * $100,000 of play money. Real dates stay hidden ("Day 1, Day 2…") until
+ * the end screen, so players can't just remember what happened.
  *
- * The price is a random walk most of the time; each news item pushes it
- * up or down according to its `impact` and category (see
- * assets/js/trading-game.js). All game logic runs in the browser — this
- * page only loads the news pool and the high-score table from MySQL.
- * Finished games are saved through api/save_game.php.
+ * All game logic runs in the browser (assets/js/trading-game.js) — this
+ * page only loads the price history, the headlines and the high-score
+ * table from MySQL. Finished games are saved through api/save_game.php.
  *
- * Requires sql/migrations/002_trading_game.sql to have been imported.
+ * Requires sql/migrations/002_trading_game.sql and
+ * sql/migrations/010_game_real_soxx.sql to have been imported.
  */
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/categories.php';
@@ -22,15 +24,41 @@ require_login();
 const GAME_START_CASH = 100000;
 
 $pdo = get_db();
+$prices = [];
 $news = [];
 $highScores = [];
 $setupError = null;
 
 try {
+    // Real SOXX daily candles: [date, open, high, low, close]
+    foreach ($pdo->query('
+        SELECT trade_date, open_price, high_price, low_price, close_price
+        FROM game_soxx_daily
+        ORDER BY trade_date
+    ') as $r) {
+        $prices[] = [
+            $r['trade_date'],
+            (float)$r['open_price'], (float)$r['high_price'],
+            (float)$r['low_price'], (float)$r['close_price'],
+        ];
+    }
+
+    // Real, verified headlines. The one-line lesson takeaway comes from the
+    // matching game_news row when there is one.
     $news = $pdo->query('
-        SELECT id, category, headline, summary, impact, explanation
-        FROM game_news
-        WHERE is_active = 1
+        SELECT n.id, n.ticker, c.name AS company, n.category, n.headline, n.summary,
+               n.source_url, DATE(n.published_at) AS published_date,
+               n.price_change_stock, n.price_change_sector, g.explanation
+        FROM news_articles n
+        LEFT JOIN companies c ON c.ticker = n.ticker
+        LEFT JOIN (
+            SELECT source_article_id, MAX(explanation) AS explanation
+            FROM game_news
+            WHERE is_active = 1
+            GROUP BY source_article_id
+        ) g ON g.source_article_id = n.id
+        WHERE n.is_simulated = 0
+        ORDER BY n.published_at
     ')->fetchAll();
 
     $stmt = $pdo->prepare('
@@ -43,13 +71,15 @@ try {
     $stmt->execute(['uid' => CURRENT_USER_ID]);
     $highScores = $stmt->fetchAll();
 } catch (PDOException $e) {
-    $setupError = 'The trading game tables are missing. Import sql/migrations/002_trading_game.sql '
-        . 'in phpMyAdmin (select the stocksense database → Import, character set utf8mb4), then reload this page.';
+    $setupError = 'The trading game tables are missing. In phpMyAdmin, select the stocksense database → Import, '
+        . 'and import sql/migrations/002_trading_game.sql and then sql/migrations/010_game_real_soxx.sql '
+        . '(character set utf8mb4). Then reload this page.';
 }
 
 foreach ($news as &$n) {
     $n['id'] = (int)$n['id'];
-    $n['impact'] = (int)$n['impact'];
+    $n['price_change_stock'] = $n['price_change_stock'] === null ? null : (float)$n['price_change_stock'];
+    $n['price_change_sector'] = $n['price_change_sector'] === null ? null : (float)$n['price_change_sector'];
 }
 unset($n);
 
@@ -60,6 +90,7 @@ foreach (CATEGORIES as $key => $cat) {
 
 $gameConfig = [
     'startCash'  => GAME_START_CASH,
+    'prices'     => $prices,
     'news'       => $news,
     'categories' => $categoriesForJs,
     'saveUrl'    => '../api/save_game.php',
@@ -78,11 +109,12 @@ require __DIR__ . '/../includes/header.php';
         <h1>Trading Game</h1>
         <p><?= htmlspecialchars($setupError) ?></p>
     </section>
-<?php elseif (count($news) === 0): ?>
+<?php elseif (count($prices) < 300 || count($news) === 0): ?>
     <section class="game-setup-error">
         <h1>Trading Game</h1>
-        <p>No active news in the <code>game_news</code> table yet, so there's nothing to trade on.
-           Re-import <code>sql/migrations/002_trading_game.sql</code>.</p>
+        <p>The game needs real SOXX prices and headlines, but the database doesn't have enough yet.
+           Import <code>sql/migrations/010_game_real_soxx.sql</code> (prices) and make sure
+           <code>news_articles</code> has real headlines, then reload.</p>
     </section>
 <?php else: ?>
 
@@ -91,7 +123,7 @@ require __DIR__ . '/../includes/header.php';
     <div class="game-topbar">
         <div class="ticker-block">
             <span class="ticker-symbol">SOXX</span>
-            <span class="ticker-name">Semiconductor ETF · simulated</span>
+            <span class="ticker-name">iShares Semiconductor ETF · real history</span>
         </div>
         <div class="price-block">
             <span class="price-now" id="price-now">—</span>
@@ -219,14 +251,14 @@ require __DIR__ . '/../includes/header.php';
         <div class="overlay-box">
             <img class="overlay-mascot mascot-animated" src="../assets/img/animations/mascot-base-natural-v5.gif" alt="">
             <h1>The Trading Floor</h1>
-            <p>You have <strong>$100,000</strong> of play money and one year on the trading floor.
-               The chart is a simulated <strong>SOXX</strong>, a basket of semiconductor stocks.
-               It wanders randomly, but <strong>news moves it</strong> in the ways you learned in the lessons.</p>
+            <p>You have <strong>$100,000</strong> of play money and up to one year on the trading floor.
+               The chart replays <strong>real SOXX history</strong>, a basket of the biggest semiconductor stocks,
+               from a random year between 2023 and 2026. The real headlines from that year break as they happened.</p>
             <ul class="how-to">
-                <li><strong>Read the Newswire</strong> on the left. Company names are disguised (e.g. "Company ABC"), so trust your lessons, not your memory.</li>
+                <li><strong>Read the Newswire</strong> on the left. The dates are hidden, so you won't know which year it is. Trust your lessons, not your memory.</li>
+                <li>Headlines arrive <strong>after the market closes</strong>, so you can trade at that close before the next session reacts.</li>
                 <li><strong>Long</strong> if you think the sector will rise, <strong>Short</strong> if you think it will fall. <strong>Close</strong> to lock in your profit or loss.</li>
-                <li>Not every headline moves prices the same way. Some hit instantly, others ripple for days.</li>
-                <li>End the game whenever you like. At the end you'll see how each headline really moved the market.</li>
+                <li>End the game whenever you like. At the end you'll see the real dates, how SOXX reacted to each headline, and links to the original articles.</li>
             </ul>
             <p class="shortcut-note">Shortcuts: <kbd>Space</kbd> pause · <kbd>L</kbd> long · <kbd>S</kbd> short · <kbd>C</kbd> close</p>
             <button class="btn btn-primary" id="btn-start">Open the market</button>

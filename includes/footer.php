@@ -1,7 +1,7 @@
 </main>
 <footer class="site-footer">
     <p>StockSense is an educational tool for learning how news affects semiconductor stocks.
-       It is <strong>not financial advice</strong> and does not simulate real trading.
+       It is <strong>not financial advice</strong>, and the trading game uses play money only.
        Read the <a href="<?= $base_url ?>/pages/disclaimer.php">full disclaimer</a>.</p>
 </footer>
 <?php if (!is_logged_in() && !isset($auth_mode)): ?>

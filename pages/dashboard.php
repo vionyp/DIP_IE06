@@ -43,6 +43,9 @@ require __DIR__ . '/../includes/header.php';
 
 <section class="dashboard">
     <h1>Your dashboard</h1>
+    <p class="dashboard-intro">Pick a news category below. Each one has a short <strong>lesson</strong>
+       and a <strong>quiz</strong> on real headlines. When you're ready, put it all into practice in the
+       <a href="game.php">Trading Game</a>.</p>
 
     <div class="streak-banner">
         <span class="streak-flame">🔥</span>
@@ -82,6 +85,16 @@ require __DIR__ . '/../includes/header.php';
                 </div>
             </div>
         <?php endforeach; ?>
+    </div>
+
+    <div class="game-promo">
+        <img src="../assets/img/overview-game.svg" alt="">
+        <div>
+            <h2>Ready to practise?</h2>
+            <p>Replay a real year of the SOXX chip index with $100,000 of play money while the real headlines break.
+               Go long or short and see if you can beat the market.</p>
+            <a class="btn" href="game.php">Play the Trading Game →</a>
+        </div>
     </div>
 </section>
 
